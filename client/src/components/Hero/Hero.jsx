@@ -25,9 +25,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <span className={styles.firstname}>Prénom</span>
-          <br />
-          <em>Nom</em>
+          <em>Seedarrt</em>
         </motion.h1>
 
         <motion.p

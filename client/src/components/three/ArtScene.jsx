@@ -1,51 +1,50 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Float, Environment, MeshDistortMaterial, Preload } from '@react-three/drei'
+import { Environment, useGLTF, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
 function Sculpture() {
-  const meshRef = useRef()
-  const wireRef = useRef()
+  const groupRef = useRef()
+  const { scene } = useGLTF('/models/Project%205.glb')
+  const mouse = useRef({ x: 0, y: 0 })
+  const rot = useRef({ x: 0, y: 0 })
+  const vel = useRef({ x: 0, y: 0 })
 
-  useFrame(({ clock, pointer }) => {
-    if (!meshRef.current) return
-    meshRef.current.rotation.x = Math.sin(clock.elapsedTime * 0.12) * 0.15 + pointer.y * 0.08
-    meshRef.current.rotation.y = clock.elapsedTime * 0.07 + pointer.x * 0.15
-    if (wireRef.current) {
-      wireRef.current.rotation.x = meshRef.current.rotation.x
-      wireRef.current.rotation.y = meshRef.current.rotation.y
+  useEffect(() => {
+    const onMove = (e) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1
     }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [])
+
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return
+
+    const targetX = -mouse.current.y * 0.55
+    const targetY = mouse.current.x * 0.75
+
+    // spring physics : attraction vers la cible + amortissement
+    vel.current.x += (targetX - rot.current.x) * 0.1
+    vel.current.y += (targetY - rot.current.y) * 0.1
+    vel.current.x *= 0.78
+    vel.current.y *= 0.78
+    rot.current.x += vel.current.x
+    rot.current.y += vel.current.y
+
+    groupRef.current.rotation.x = rot.current.x
+    groupRef.current.rotation.y = rot.current.y
+    groupRef.current.position.y = -0.5 + Math.sin(clock.elapsedTime * 1.2) * 0.12
   })
 
   return (
-    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
-      {/* Solid inner mesh */}
-      <mesh ref={meshRef} position={[2.8, 0, 0]} scale={2.0}>
-        <icosahedronGeometry args={[1, 4]} />
-        <MeshDistortMaterial
-          color="#181818"
-          roughness={0.05}
-          metalness={0.95}
-          distort={0.2}
-          speed={1.2}
-          envMapIntensity={2}
-        />
-      </mesh>
-
-      {/* Wireframe overlay — low-poly silhouette */}
-      <mesh ref={wireRef} position={[2.8, 0, 0]} scale={2.06}>
-        <icosahedronGeometry args={[1, 1]} />
-        <meshBasicMaterial
-          color={new THREE.Color('#b8975a').multiplyScalar(0.4)}
-          wireframe
-          transparent
-          opacity={0.25}
-        />
-      </mesh>
-    </Float>
+    <primitive ref={groupRef} object={scene} scale={0.48} position={[2.8, -0.5, 0]} />
   )
 }
+
+useGLTF.preload('/models/Project%205.glb')
 
 export default function ArtScene() {
   return (
@@ -54,9 +53,9 @@ export default function ArtScene() {
       gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
       dpr={[1, 2]}
     >
-      <ambientLight intensity={0.08} />
-      <directionalLight position={[6, 6, 4]} intensity={0.6} color="#f5f0ea" />
-      <pointLight position={[-6, -4, -4]} intensity={0.4} color="#b8975a" />
+      <ambientLight intensity={0.3} />
+      <directionalLight position={[6, 6, 4]} intensity={1.2} color="#f5f0ea" />
+      <pointLight position={[-6, -4, -4]} intensity={0.8} color="#b8975a" />
 
       <Environment preset="night" />
       <Sculpture />

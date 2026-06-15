@@ -19,13 +19,16 @@ npm run dev:server
 
 # Production build (client only — server runs as-is)
 npm run build
+
+# Preview the production build locally
+cd client && npm run preview
 ```
 
 ## Architecture
 
 ```
 Seedarrt_final/
-├── client/                          # Vite + React SPA
+├── client/                          # Vite + React SPA (ESM — "type": "module")
 │   ├── public/
 │   │   └── works/                   # Drop artwork images here (jpg/png/webp)
 │   └── src/
@@ -39,13 +42,19 @@ Seedarrt_final/
 │       │       └── ArtScene.jsx     # The only Three.js scene in the app
 │       └── styles/
 │           └── globals.css          # CSS custom properties (design tokens)
-└── server/                          # Express API
+└── server/                          # Express API (CommonJS — require/module.exports)
     └── src/
         ├── index.js                 # Entry point — cors, json, mounts routes
         └── routes/contact.js        # POST /api/contact → nodemailer
 ```
 
 **Single-page scroll layout** — no React Router. Navigation uses anchor links (`#portfolio`, `#about`, `#contact`). The Vite dev server proxies `/api/*` to `http://localhost:3001`.
+
+**Module systems differ**: the client uses ESM (`import`/`export`), the server uses CommonJS (`require`/`module.exports`). Don't mix them.
+
+## Animations
+
+All UI animations use **Framer Motion** (`framer-motion`): scroll-triggered reveals (`whileInView`), layout transitions for the portfolio filter (`layout` + `AnimatePresence`), and entrance animations. The 3D canvas has its own animation loop via R3F's `useFrame`.
 
 ## Design system
 
@@ -65,9 +74,9 @@ Each component has its own `.module.css` file co-located next to the `.jsx`. Do 
 
 ## 3D scene (`ArtScene.jsx`)
 
-The canvas is positioned `absolute inset-0` inside the Hero section with `alpha: true` so the dark CSS background shows through. The scene contains a single `<Sculpture>` component: an icosahedron with `MeshDistortMaterial` (inner mesh) and a low-poly wireframe overlay. Mouse parallax is driven via R3F's `useFrame` + `pointer` state.
+The canvas is positioned `absolute inset-0` inside the Hero section with `alpha: true` so the dark CSS background shows through. The scene contains a single `<Sculpture>` component: an icosahedron with `MeshDistortMaterial` (inner mesh) and a low-poly wireframe overlay. Mouse parallax is driven via R3F's `useFrame` + `pointer` state. A `Bloom` post-processing effect from `@react-three/postprocessing` adds glow.
 
-**Adding the artist's own 3D models** — use Drei's `<useGLTF>` hook:
+**Adding the artist's own 3D models** — use Drei's `useGLTF` hook:
 
 ```jsx
 import { useGLTF } from '@react-three/drei'
@@ -82,7 +91,7 @@ Drop `.glb` files in `client/public/models/`. Keep file sizes under 5 MB for web
 
 ## Adding artwork to the portfolio
 
-In `Portfolio.jsx`, edit the `works` array and set the `src` field to a path relative to `client/public/`:
+In `Portfolio.jsx`, edit the `works` array. Set `src` to a path relative to `client/public/` (or `null` to show a placeholder):
 
 ```js
 { id: 1, title: 'Titre', category: 'Peinture', year: '2025', aspect: 'portrait', src: '/works/painting-01.jpg' }
@@ -92,4 +101,4 @@ In `Portfolio.jsx`, edit the `works` array and set the `src` field to a path rel
 
 ## Email contact form
 
-The server uses nodemailer. Copy `server/.env.example` to `server/.env` and fill in SMTP credentials before the contact form will work. The form degrades gracefully if the server is unreachable (shows an error message client-side).
+The server uses nodemailer. Copy `server/.env.example` to `server/.env` and fill in SMTP credentials before the contact form will work. `CONTACT_EMAIL` is where messages are delivered; `CLIENT_URL` controls the CORS origin in production. The form degrades gracefully if the server is unreachable (shows an error message client-side).
