@@ -5,6 +5,7 @@ import Portfolio from './components/Portfolio/Portfolio'
 import About from './components/About/About'
 import Contact from './components/Contact/Contact'
 import Intro from './components/Intro/Intro'
+import GrainOverlay from './components/GrainOverlay/GrainOverlay'
 import { useLenis } from './hooks/useLenis'
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
 
   return (
     <>
+      <GrainOverlay />
       {!introDone && <Intro onDone={handleIntroDone} />}
       <Navbar />
       <main>

@@ -173,7 +173,7 @@
 .submit {
   align-self: flex-start;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(196, 163, 90, 0.22);
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: 0.68rem;

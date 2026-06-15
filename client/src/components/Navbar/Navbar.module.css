@@ -14,7 +14,7 @@
 
 .nav.scrolled {
   padding: 1.2rem var(--side-padding);
-  background: rgba(8, 8, 8, 0.82);
+  background: rgba(8, 7, 5, 0.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border);
