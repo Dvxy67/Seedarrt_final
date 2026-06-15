@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import styles from './About.module.css'
+import RevealText from '../ui/RevealText'
 
 export default function About() {
   return (
@@ -21,45 +22,24 @@ export default function About() {
         </div>
 
         <div className={styles.textCol}>
-          <motion.span
-            className={styles.label}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            À propos
-          </motion.span>
+          <RevealText>
+            <span className={styles.label}>À propos</span>
+          </RevealText>
 
-          <motion.h2
-            className={styles.heading}
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: 0.1 }}
-          >
-            Une démarche
-            <br />
-            <em>entre matière</em>
-            <br />
-            et lumière
-          </motion.h2>
+          <h2 className={styles.heading}>
+            <RevealText delay={0.1}>Une démarche</RevealText>
+            <RevealText delay={0.2}><em>entre matière</em></RevealText>
+            <RevealText delay={0.3}>et lumière</RevealText>
+          </h2>
 
           <motion.div
             className={styles.body}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.85, delay: 0.2 }}
+            transition={{ duration: 1, delay: 0.2 }}
           >
-            <p>
-              À remplir — biographie de l'artiste : formation, démarche, ce qui l'inspire,
-              les outils et matériaux qu'il ou elle utilise au quotidien.
-            </p>
-            <p>
-              Second paragraphe — évolution du travail, expositions, collaborations
-              ou projets marquants qui ont jalonné le parcours.
-            </p>
+            <p className={styles.wip}>Work in progress</p>
           </motion.div>
 
           <motion.div

@@ -40,7 +40,7 @@ function Sculpture() {
   })
 
   return (
-    <primitive ref={groupRef} object={scene} scale={0.48} position={[2.8, -0.5, 0]} />
+    <primitive ref={groupRef} object={scene} scale={0.48} position={[4.0, -0.5, 0]} />
   )
 }
 

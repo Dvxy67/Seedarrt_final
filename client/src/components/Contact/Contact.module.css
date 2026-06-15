@@ -1,15 +1,39 @@
 .section {
-  padding: var(--spacing-section) var(--side-padding) 0;
   border-top: 1px solid var(--color-border);
 }
 
+/* ── Marquee ── */
+.marqueeWrap {
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.1rem 0;
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  animation: marquee 22s linear infinite;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Inner ── */
 .inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9rem;
-  padding-bottom: var(--spacing-section);
+  padding: var(--spacing-section) var(--side-padding);
+}
+
+/* ── Titre ── */
+.titleBlock {
+  margin-bottom: 3rem;
 }
 
 .label {
@@ -23,11 +47,10 @@
 
 .heading {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3.8vw, 3.4rem);
+  font-size: clamp(4rem, 10vw, 11rem);
   font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
-  margin-bottom: 2rem;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
 }
 
 .heading em {
@@ -35,33 +58,79 @@
   color: var(--color-text-muted);
 }
 
-.intro {
-  font-size: 0.9rem;
-  line-height: 1.85;
-  color: var(--color-text-muted);
-  margin-bottom: 2.5rem;
-  max-width: 38ch;
+/* ── Bottom grid ── */
+.bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9rem;
+  align-items: start;
 }
 
-.email {
+.left {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Email ── */
+.emailBig {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: clamp(1.3rem, 2.5vw, 2.4rem);
+  font-weight: 300;
   color: var(--color-text);
   text-decoration: none;
-  border-bottom: 1px solid var(--color-accent);
-  padding-bottom: 0.2rem;
-  transition: color 0.3s ease;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.3rem;
+  margin-bottom: 2.8rem;
+  transition: color 0.35s ease;
 }
 
-.email:hover {
+.emailBig::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-accent);
+  transition: width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.emailBig:hover {
   color: var(--color-accent);
 }
 
-/* Form */
+.emailBig:hover::after {
+  width: 100%;
+}
+
+/* ── Socials ── */
+.socials {
+  display: flex;
+  gap: 1.8rem;
+}
+
+.social {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.social:hover {
+  color: var(--color-accent);
+}
+
+/* ── Form ── */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 2.2rem;
+  gap: 2rem;
 }
 
 .field {
@@ -97,26 +166,27 @@
 }
 
 .textarea {
-  min-height: 110px;
+  min-height: 100px;
   line-height: 1.7;
 }
 
 .submit {
   align-self: flex-start;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--color-text);
+  font-family: var(--font-body);
   font-size: 0.68rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 1rem 2.5rem;
   cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
 }
 
 .submit:hover:not(:disabled) {
-  background: var(--color-text);
-  border-color: var(--color-text);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
   color: var(--color-bg);
 }
 
@@ -137,20 +207,22 @@
   letter-spacing: 0.05em;
 }
 
-/* Footer */
+/* ── Footer ── */
 .footer {
   border-top: 1px solid var(--color-border);
-  padding: 2rem 0;
+  padding: 2rem var(--side-padding);
   text-align: center;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
   color: var(--color-text-muted);
   text-transform: uppercase;
+  max-width: 100%;
 }
 
 @media (max-width: 960px) {
-  .inner {
-    grid-template-columns: 1fr;
-    gap: 4rem;
-  }
+  .bottom { grid-template-columns: 1fr; gap: 4rem; }
+}
+
+@media (max-width: 768px) {
+  .heading { font-size: clamp(3rem, 13vw, 6rem); }
 }

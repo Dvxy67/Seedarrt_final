@@ -59,16 +59,16 @@
   color: var(--color-bg);
 }
 
-/* Grid */
+/* Grid — masonry via CSS columns */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
+  columns: 3;
+  column-gap: 1.2rem;
 }
 
 /* Card */
 .card {
-  overflow: hidden;
+  break-inside: avoid;
+  margin-bottom: 1.2rem;
 }
 
 .thumb {
@@ -77,19 +77,16 @@
   cursor: pointer;
 }
 
-.portrait  .thumb { aspect-ratio: 3 / 4; }
-.square    .thumb { aspect-ratio: 1 / 1; }
-.landscape .thumb { aspect-ratio: 4 / 3; }
-
-.image,
-.placeholder {
+.image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  display: block;
   transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .placeholder {
+  width: 100%;
+  aspect-ratio: 3 / 4;
   background: var(--color-surface);
 }
 
@@ -132,11 +129,11 @@
 }
 
 @media (max-width: 900px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid { columns: 2; }
 }
 
 @media (max-width: 580px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid { columns: 1; }
 }
 
 /* Lightbox */

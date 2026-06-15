@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Portfolio.module.css'
+import RevealText from '../ui/RevealText'
 
 const categories = ['Tous', 'Peinture', '3D', 'Graphisme']
 
@@ -83,12 +84,11 @@ function Lightbox({ work, works, onClose, onSelect }) {
 function WorkCard({ work, index, onClick }) {
   return (
     <motion.article
-      className={`${styles.card} ${styles[work.aspect]}`}
-      layout
-      initial={{ opacity: 0, y: 36 }}
+      className={styles.card}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.55, delay: index * 0.08 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.06 }}
       onClick={() => onClick(work)}
     >
       <div className={styles.thumb}>
@@ -117,16 +117,14 @@ export default function Portfolio() {
   return (
     <section className={styles.section} id="portfolio">
       <div className={styles.inner}>
-        <motion.header
-          className={styles.header}
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.85 }}
-        >
-          <span className={styles.label}>Œuvres</span>
-          <h2 className={styles.heading}>Portfolio</h2>
-        </motion.header>
+        <header className={styles.header}>
+          <RevealText>
+            <span className={styles.label}>Œuvres</span>
+          </RevealText>
+          <h2 className={styles.heading}>
+            <RevealText delay={0.12}>Portfolio</RevealText>
+          </h2>
+        </header>
 
         <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
           {categories.map(cat => (
@@ -141,13 +139,13 @@ export default function Portfolio() {
           ))}
         </div>
 
-        <motion.div className={styles.grid} layout>
+        <div className={styles.grid}>
           <AnimatePresence mode="popLayout">
             {filtered.map((work, i) => (
               <WorkCard key={work.id} work={work} index={i} onClick={setSelected} />
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
 
       <AnimatePresence>

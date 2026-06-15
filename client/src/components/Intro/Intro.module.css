@@ -1,0 +1,16 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.logo {
+  width: clamp(400px, 75vw, 1100px);
+  height: auto;
+  display: block;
+}
