@@ -1,10 +1,9 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion } from 'framer-motion'
 import styles from './Contact.module.css'
 import RevealText from '../ui/RevealText'
 
 const INITIAL = { name: '', email: '', message: '' }
-const MARQUEE = '— Seedarrt — Peinture — 3D — Graphisme — Disponible pour commandes   '
 
 export default function Contact() {
   const [form, setForm] = useState(INITIAL)
@@ -32,14 +31,6 @@ export default function Contact() {
 
   return (
     <section className={styles.section} id="contact">
-
-      {/* Marquee */}
-      <div className={styles.marqueeWrap}>
-        <div className={styles.marqueeTrack}>
-          <span>{MARQUEE}</span>
-          <span aria-hidden="true">{MARQUEE}</span>
-        </div>
-      </div>
 
       <div className={styles.inner}>
 
