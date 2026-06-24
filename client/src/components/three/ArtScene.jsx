@@ -1,15 +1,20 @@
 import { useRef, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, useGLTF, Preload } from '@react-three/drei'
+import { Environment, useGLTF, useAnimations, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
 function Sculpture() {
   const groupRef = useRef()
-  const { scene } = useGLTF('/models/Project%205.glb')
+  const { scene, animations } = useGLTF('/models/Project%205.glb')
+  const { actions } = useAnimations(animations, groupRef)
   const mouse = useRef({ x: 0, y: 0 })
   const rot = useRef({ x: 0, y: 0 })
   const vel = useRef({ x: 0, y: 0 })
+
+  useEffect(() => {
+    actions['Run']?.play()
+  }, [actions])
 
   useEffect(() => {
     const onMove = (e) => {
