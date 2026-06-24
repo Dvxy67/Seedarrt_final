@@ -1,4 +1,10 @@
+.wrapper {
+  height: 250vh;
+}
+
 .section {
+  position: sticky;
+  top: 0;
   padding: var(--spacing-section) var(--side-padding);
   border-top: 1px solid var(--color-border);
 }
@@ -20,6 +26,7 @@
 .photoPlaceholder,
 .photo {
   width: 100%;
+  max-height: 65vh;
   aspect-ratio: 3 / 4;
   object-fit: cover;
   background: var(--color-surface);
