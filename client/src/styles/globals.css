@@ -1,10 +1,10 @@
 :root {
-  --color-bg: #080705;
-  --color-surface: #141210;
-  --color-text: #f0ede8;
-  --color-text-muted: #a8a49e;
-  --color-accent: #c4a35a;
-  --color-border: rgba(196, 163, 90, 0.12);
+  --color-bg: #0f0b08;
+  --color-surface: #1a1410;
+  --color-text: #f2ede6;
+  --color-text-muted: #9a8f85;
+  --color-accent: #c4623a;
+  --color-border: rgba(196, 98, 58, 0.15);
 
   --font-display: 'Cormorant Garamond', serif;
   --font-body: 'DM Sans', sans-serif;
