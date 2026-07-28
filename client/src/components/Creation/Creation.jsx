@@ -14,17 +14,17 @@ gsap.registerPlugin(ScrollTrigger)
 const steps = [
   {
     index: '01',
-    name: 'Peinture',
-    description: "Exploration de la matière et de la couleur à travers l'huile sur toile. Des œuvres organiques inspirées par la nature et ses cycles.",
-    type: 'image',
-    src: '/works/1_I came across the rainforest_oil painting_2025_75x60cm 2.JPG',
-  },
-  {
-    index: '02',
-    name: '3D',
+    name: 'Objet 3D',
     description: 'Sculpture numérique et modélisation. Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.',
     type: 'scene',
     src: null,
+  },
+  {
+    index: '02',
+    name: 'Peinture',
+    description: "Exploration de la matière et de la couleur à travers l'huile sur toile. Des œuvres organiques inspirées par la nature et ses cycles.",
+    type: 'image',
+    src: '/works/11_Death of the giants creatures, their death, creator of a new life_oil paintings_2025_150x100cm 2.JPG',
   },
   {
     index: '03',
@@ -101,18 +101,29 @@ export default function Creation() {
     const wrapper = wrapperRef.current
     if (!wrapper) return
 
+    const nav = document.querySelector('nav')
+    const showNav = () => gsap.to(nav, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.inOut' })
+    const hideNav = () => gsap.to(nav, { y: -80, autoAlpha: 0, duration: 0.5, ease: 'power2.inOut' })
+
     const trigger = ScrollTrigger.create({
       trigger: wrapper,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
+      onEnter:     () => hideNav(),
+      onEnterBack: () => hideNav(),
+      onLeave:     () => showNav(),
+      onLeaveBack: () => showNav(),
       onUpdate: (self) => {
         const next = Math.min(steps.length - 1, Math.floor(self.progress * steps.length))
         setActiveStep(next)
       },
     })
 
-    return () => trigger.kill()
+    return () => {
+      trigger.kill()
+      showNav()
+    }
   }, [])
 
   const step = steps[activeStep]
@@ -122,66 +133,68 @@ export default function Creation() {
       <section className={styles.section} id="creation">
 
         <div className={styles.left}>
-          <span className={styles.label}>Création</span>
 
-          <div className={styles.stepInfo}>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={step.index}
-                className={styles.index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {step.index}
-              </motion.span>
-            </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={step.index}
+              className={styles.index}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {step.index}
+            </motion.span>
+          </AnimatePresence>
 
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={step.name}
-                className={styles.name}
-                initial={{ opacity: 0, y: 28, clipPath: 'inset(0 0 100% 0)' }}
-                animate={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }}
-                exit={{ opacity: 0, y: -16, clipPath: 'inset(100% 0 0% 0)' }}
-                transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-              >
-                {step.name}
-              </motion.h2>
-            </AnimatePresence>
-          </div>
-
-          <div className={styles.divider} />
+          <h2 className={styles.title}>
+            <span className={styles.titleHighlight}>Création</span>
+          </h2>
 
           <AnimatePresence mode="wait">
             <motion.p
-              key={step.description}
-              className={styles.description}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
+              key={step.name}
+              className={styles.name}
+              initial={{ opacity: 0, y: 20, clipPath: 'inset(0 0 100% 0)' }}
+              animate={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }}
+              exit={{ opacity: 0, y: -12, clipPath: 'inset(100% 0 0% 0)' }}
+              transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {step.description}
+              {step.name}
             </motion.p>
           </AnimatePresence>
 
-          <div className={styles.dots}>
-            {steps.map((_, i) => (
-              <span
-                key={i}
-                className={`${styles.dot} ${i === activeStep ? styles.dotActive : ''}`}
-              />
-            ))}
+          <div className={styles.bottom}>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={step.description}
+                className={styles.description}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, delay: 0.08 }}
+              >
+                {step.description}
+              </motion.p>
+            </AnimatePresence>
+
+            <div className={styles.dots}>
+              {steps.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.dot} ${i === activeStep ? styles.dotActive : ''}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
         <div className={styles.right}>
+
           {steps.map((s, i) => (
             <div
               key={s.name}
-              className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''}`}
+              className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''} ${s.type === 'scene' ? styles.mediaScene : ''}`}
             >
               {s.type === 'image'
                 ? <img src={s.src} alt={s.name} className={styles.image} loading="eager" />

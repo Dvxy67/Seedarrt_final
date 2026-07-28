@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './components/Navbar/Navbar'
 import Hero from './components/Hero/Hero'
 import Creation from './components/Creation/Creation'
@@ -11,6 +13,13 @@ import { useLenis } from './hooks/useLenis'
 
 export default function App() {
   useLenis()
+
+  useEffect(() => {
+    const t1 = setTimeout(() => ScrollTrigger.refresh(), 300)
+    const t2 = setTimeout(() => ScrollTrigger.refresh(), 1200)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [])
+
   const [introDone, setIntroDone] = useState(
     () => localStorage.getItem('seedarrt-intro') === '1'
   )

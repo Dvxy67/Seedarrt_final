@@ -16,59 +16,60 @@
 .left {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 4rem var(--side-padding);
+  padding: 3.5rem var(--side-padding);
   position: relative;
   z-index: 1;
 }
 
-.label {
-  font-size: 0.68rem;
-  letter-spacing: 0.42em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  margin-bottom: 3rem;
-}
-
-.stepInfo {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
-}
-
 .index {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
+  display: block;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  color: var(--color-text);
+  font-family: var(--font-body);
   font-weight: 300;
-  color: var(--color-accent);
-  padding-top: 0.9rem;
-  flex-shrink: 0;
+  margin-bottom: 0.4rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 8vw, 9rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin: 0 0 0.08em;
+}
+
+.titleHighlight {
+  background: rgba(184, 151, 90, 0.18);
+  padding: 0.02em 0.18em;
+  display: inline-block;
 }
 
 .name {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 8vw, 9rem);
+  font-size: clamp(3.4rem, 7.2vw, 8.2rem);
   font-weight: 300;
   font-style: italic;
-  line-height: 0.9;
+  line-height: 1;
   letter-spacing: -0.02em;
   color: var(--color-text);
   margin: 0;
 }
 
-.divider {
-  width: 3rem;
-  height: 1px;
-  background: var(--color-border);
-  margin: 2.5rem 0;
+.bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .description {
-  font-size: 0.9rem;
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
   font-weight: 300;
-  line-height: 1.85;
+  line-height: 1.8;
   color: var(--color-text-muted);
-  max-width: 38ch;
+  max-width: 44ch;
   margin: 0;
 }
 
@@ -99,11 +100,21 @@
   overflow: hidden;
 }
 
+
 .media {
   position: absolute;
   inset: 0;
   opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2.5rem;
   transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1;
+}
+
+.mediaScene {
+  padding: 0;
 }
 
 .mediaActive {
@@ -111,10 +122,12 @@
 }
 
 .image {
-  width: 100%;
   height: 100%;
-  object-fit: cover;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
   display: block;
+  filter: brightness(0.95);
 }
 
 /* ── Mobile ── */

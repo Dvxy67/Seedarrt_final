@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import styles from './Contact.module.css'
 import RevealText from '../ui/RevealText'
@@ -93,12 +93,53 @@ export default function Contact() {
             transition={{ duration: 0.85, delay: 0.15 }}
             noValidate
           >
-            <Field id="name"    label="Nom"     type="text"     value={form.name}    onChange={handleChange} />
-            <Field id="email"   label="Email"   type="email"    value={form.email}   onChange={handleChange} />
-            <Field id="message" label="Message" type="textarea" value={form.message} onChange={handleChange} />
+            <div className={styles.conversational}>
+              <p className={styles.sentence}>
+                Je m'appelle{' '}
+                <span className={styles.fieldWrap}>
+                  <input
+                    className={styles.inlineInput}
+                    name="name"
+                    type="text"
+                    required
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="votre nom"
+                  />
+                </span>
+              </p>
+              <p className={styles.sentence}>
+                Mon email est{' '}
+                <span className={styles.fieldWrap}>
+                  <input
+                    className={styles.inlineInput}
+                    name="email"
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="votre email"
+                  />
+                </span>
+              </p>
+              <p className={styles.sentence}>
+                Je vous contacte pour{' '}
+                <span className={styles.fieldWrap}>
+                  <input
+                    className={styles.inlineInput}
+                    name="message"
+                    type="text"
+                    required
+                    value={form.message}
+                    onChange={handleChange}
+                    placeholder="votre projet"
+                  />
+                </span>
+              </p>
+            </div>
 
             <button type="submit" className={styles.submit} disabled={status === 'sending'}>
-              {status === 'sending' ? 'Envoi…' : 'Envoyer'}
+              {status === 'sending' ? 'Envoi…' : 'Écrire'}
             </button>
 
             {status === 'sent'  && <p className={styles.success}>Message envoyé. Merci !</p>}
@@ -112,18 +153,5 @@ export default function Contact() {
         <p>© {new Date().getFullYear()} Seedarrt — Tous droits réservés</p>
       </footer>
     </section>
-  )
-}
-
-function Field({ id, label, type, value, onChange }) {
-  return (
-    <div className={styles.field}>
-      <label className={styles.fieldLabel} htmlFor={id}>{label}</label>
-      {type === 'textarea' ? (
-        <textarea className={`${styles.input} ${styles.textarea}`} id={id} name={id} required rows={4} value={value} onChange={onChange} />
-      ) : (
-        <input className={styles.input} id={id} name={id} type={type} required value={value} onChange={onChange} />
-      )}
-    </div>
   )
 }
