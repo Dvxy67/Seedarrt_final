@@ -6,10 +6,11 @@ import { SkeletonUtils } from 'three-stdlib'
 import * as THREE from 'three'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Creation.module.css'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
 const steps = [
   {
@@ -96,73 +97,86 @@ function StepScene() {
 export default function Creation() {
   const [activeStep, setActiveStep] = useState(0)
   const wrapperRef = useRef(null)
+  const progressTrackRef = useRef(null)
+  const progressFillRef = useRef(null)
 
   useEffect(() => {
     const wrapper = wrapperRef.current
+    const progressTrack = progressTrackRef.current
+    const progressFill = progressFillRef.current
     if (!wrapper) return
 
     const nav = document.querySelector('nav')
-    const showNav = () => gsap.to(nav, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.inOut' })
-    const hideNav = () => gsap.to(nav, { y: -80, autoAlpha: 0, duration: 0.5, ease: 'power2.inOut' })
+    const showProgress = () => {
+      if (nav) progressTrack.style.top = `${nav.offsetHeight}px`
+      gsap.to(progressTrack, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' })
+    }
+    const hideProgress = () => gsap.to(progressTrack, { autoAlpha: 0, duration: 0.4, ease: 'power2.out' })
 
     const trigger = ScrollTrigger.create({
       trigger: wrapper,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onEnter:     () => hideNav(),
-      onEnterBack: () => hideNav(),
-      onLeave:     () => showNav(),
-      onLeaveBack: () => showNav(),
+      onEnter:     showProgress,
+      onEnterBack: showProgress,
+      onLeave:     hideProgress,
+      onLeaveBack: hideProgress,
       onUpdate: (self) => {
         const next = Math.min(steps.length - 1, Math.floor(self.progress * steps.length))
         setActiveStep(next)
+        progressFill.style.width = `${self.progress * 100}%`
       },
     })
 
     return () => {
       trigger.kill()
-      showNav()
+      gsap.set(progressTrack, { autoAlpha: 0 })
     }
   }, [])
+
+  const handleStepClick = (index) => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+    const scrollableRange = wrapper.offsetHeight - window.innerHeight
+    const targetProgress = (index + 0.5) / steps.length
+    const targetY = wrapper.offsetTop + targetProgress * scrollableRange
+    setActiveStep(index)
+    gsap.to(window, { scrollTo: { y: targetY, autoKill: true }, duration: 1, ease: 'power2.inOut' })
+  }
 
   const step = steps[activeStep]
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
+      <div ref={progressTrackRef} className={styles.progressTrack}>
+        <div ref={progressFillRef} className={styles.progressFill} />
+      </div>
+
       <section className={styles.section} id="creation">
 
         <div className={styles.left}>
 
+          <div className={styles.eyebrow}>
+            <span className={styles.eyebrowLine} />
+            <span className={styles.eyebrowLabel}>Création</span>
+          </div>
+
           <AnimatePresence mode="wait">
-            <motion.span
+            <motion.div
               key={step.index}
-              className={styles.index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {step.index}
-            </motion.span>
-          </AnimatePresence>
-
-          <h2 className={styles.title}>
-            <span className={styles.titleHighlight}>Création</span>
-          </h2>
-
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={step.name}
-              className={styles.name}
+              className={styles.headRow}
               initial={{ opacity: 0, y: 20, clipPath: 'inset(0 0 100% 0)' }}
               animate={{ opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)' }}
               exit={{ opacity: 0, y: -12, clipPath: 'inset(100% 0 0% 0)' }}
               transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {step.name}
-            </motion.p>
+              <span className={styles.indexNum}>{step.index}</span>
+              <h2 className={styles.stepName}>{step.name}</h2>
+            </motion.div>
           </AnimatePresence>
+
+          <div className={styles.divider} />
 
           <div className={styles.bottom}>
             <AnimatePresence mode="wait">
@@ -178,13 +192,20 @@ export default function Creation() {
               </motion.p>
             </AnimatePresence>
 
-            <div className={styles.dots}>
-              {steps.map((_, i) => (
-                <span
-                  key={i}
-                  className={`${styles.dot} ${i === activeStep ? styles.dotActive : ''}`}
-                />
+            <div className={styles.tabs}>
+              {steps.map((s, i) => (
+                <button
+                  key={s.name}
+                  type="button"
+                  className={`${styles.tab} ${i === activeStep ? styles.tabActive : ''}`}
+                  onClick={() => handleStepClick(i)}
+                >
+                  {s.name}
+                </button>
               ))}
+              <span className={styles.counter}>
+                {String(activeStep + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
+              </span>
             </div>
           </div>
         </div>

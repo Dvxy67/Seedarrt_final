@@ -21,40 +21,54 @@
   z-index: 1;
 }
 
-.index {
-  display: block;
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-weight: 300;
-  margin-bottom: 0.4rem;
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 2rem;
 }
 
-.title {
+.eyebrowLine {
+  width: 3rem;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+.eyebrowLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.headRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2rem;
+}
+
+.indexNum {
   font-family: var(--font-display);
-  font-size: clamp(3.8rem, 8vw, 9rem);
-  font-weight: 300;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: var(--color-text-muted);
   line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  margin: 0 0 0.08em;
 }
 
-.titleHighlight {
-  background: rgba(184, 151, 90, 0.18);
-  padding: 0.02em 0.18em;
-  display: inline-block;
-}
-
-.name {
+.stepName {
   font-family: var(--font-display);
   font-size: clamp(3.4rem, 7.2vw, 8.2rem);
   font-weight: 300;
-  font-style: italic;
-  line-height: 1;
+  line-height: 0.95;
   letter-spacing: -0.02em;
   color: var(--color-text);
   margin: 0;
+}
+
+.divider {
+  width: min(340px, 60%);
+  height: 1px;
+  background: rgba(196, 98, 58, 0.35);
+  margin: 1.6rem 0;
 }
 
 .bottom {
@@ -73,24 +87,62 @@
   margin: 0;
 }
 
-.dots {
+.tabs {
   display: flex;
+  align-items: center;
   gap: 0.6rem;
   margin-top: 3.5rem;
-  align-items: center;
+  flex-wrap: wrap;
 }
 
-.dot {
-  height: 1px;
-  width: 2rem;
-  background: var(--color-border);
-  transition:
-    width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background 0.4s ease;
+.tab {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.1rem;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
-.dotActive {
-  width: 3.5rem;
+.tab:hover {
+  color: var(--color-text);
+  border-color: rgba(196, 98, 58, 0.35);
+}
+
+.tabActive {
+  border-color: var(--color-accent);
+  background: rgba(196, 98, 58, 0.14);
+  color: var(--color-text);
+}
+
+.counter {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-left: 0.4rem;
+}
+
+/* ── Filet de progression (sous la navbar) ── */
+.progressTrack {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(196, 98, 58, 0.12);
+  z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.progressFill {
+  height: 100%;
+  width: 0%;
   background: var(--color-accent);
 }
 
