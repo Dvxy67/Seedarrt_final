@@ -8,7 +8,19 @@
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
   margin-bottom: 3.5rem;
+}
+
+.stat {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .label {
@@ -59,6 +71,23 @@
   color: var(--color-bg);
 }
 
+.filterCount {
+  color: inherit;
+  opacity: 0.6;
+  margin-left: 0.3rem;
+}
+
+.filterDisabled {
+  border: 1px dashed rgba(154, 143, 133, 0.18);
+  color: var(--color-text-muted);
+  opacity: 0.45;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.3rem;
+  cursor: default;
+}
+
 /* Grid — masonry via CSS columns */
 .grid {
   columns: 3;
@@ -95,20 +124,8 @@
   transform: scale(1.05);
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(15, 11, 8, 0.75) 0%, transparent 55%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.4rem;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.thumb:hover .overlay {
-  opacity: 1;
+.caption {
+  padding-top: 0.9rem;
 }
 
 .workTitle {
@@ -192,6 +209,7 @@
 .navBtn {
   background: none;
   border: 1px solid rgba(196, 98, 58, 0.15);
+  border-radius: 50%;
   color: var(--color-text);
   font-size: 2rem;
   width: 3rem;
@@ -216,10 +234,11 @@
   right: 1.5rem;
   background: none;
   border: 1px solid rgba(196, 98, 58, 0.15);
+  border-radius: 50%;
   color: var(--color-text);
-  font-size: 1.2rem;
-  width: 2.6rem;
-  height: 2.6rem;
+  font-size: 1.3rem;
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -230,4 +249,29 @@
 .closeBtn:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+}
+
+.lightboxCounter {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  color: var(--color-text-muted);
+}
+
+.lightboxHint {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .lightboxHint { display: none; }
 }

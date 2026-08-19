@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Portfolio.module.css'
 import RevealText from '../ui/RevealText'
@@ -30,31 +30,62 @@ const works = [
 
 function Lightbox({ work, works, onClose, onSelect }) {
   const idx = works.findIndex(w => w.id === work.id)
+  const dialogRef = useRef(null)
 
   useEffect(() => {
+    const previouslyFocused = document.activeElement
+    dialogRef.current?.focus()
+
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'ArrowLeft') onSelect(works[(idx - 1 + works.length) % works.length])
       if (e.key === 'ArrowRight') onSelect(works[(idx + 1) % works.length])
+
+      if (e.key === 'Tab') {
+        const focusable = dialogRef.current?.querySelectorAll('button')
+        if (!focusable || focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      previouslyFocused?.focus?.()
+    }
   }, [idx, works, onClose, onSelect])
 
   return (
     <motion.div
+      ref={dialogRef}
       className={styles.backdrop}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${work.title} — visionneuse`}
+      tabIndex={-1}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       onClick={onClose}
     >
-      <button className={styles.closeBtn} onClick={onClose}>×</button>
+      <span className={styles.lightboxCounter}>
+        {String(idx + 1).padStart(2, '0')} / {String(works.length).padStart(2, '0')}
+      </span>
+
+      <button className={styles.closeBtn} onClick={onClose} aria-label="Fermer">×</button>
 
       <button
         className={`${styles.navBtn} ${styles.navPrev}`}
         onClick={(e) => { e.stopPropagation(); onSelect(works[(idx - 1 + works.length) % works.length]) }}
+        aria-label="Œuvre précédente"
       >‹</button>
 
       <motion.div
@@ -76,7 +107,10 @@ function Lightbox({ work, works, onClose, onSelect }) {
       <button
         className={`${styles.navBtn} ${styles.navNext}`}
         onClick={(e) => { e.stopPropagation(); onSelect(works[(idx + 1) % works.length]) }}
+        aria-label="Œuvre suivante"
       >›</button>
+
+      <span className={styles.lightboxHint}>← → naviguer · échap pour fermer</span>
     </motion.div>
   )
 }
@@ -97,10 +131,10 @@ function WorkCard({ work, index, onClick }) {
         ) : (
           <div className={styles.placeholder} />
         )}
-        <div className={styles.overlay}>
-          <span className={styles.workTitle}>{work.title}</span>
-          <span className={styles.workMeta}>{work.category} · {work.year}</span>
-        </div>
+      </div>
+      <div className={styles.caption}>
+        <span className={styles.workTitle}>{work.title}</span>
+        <span className={styles.workMeta}>{work.category} · {work.year}</span>
       </div>
     </motion.article>
   )
@@ -114,29 +148,47 @@ export default function Portfolio() {
     ? works
     : works.filter(w => w.category === active)
 
+  const counts = Object.fromEntries(
+    categories.map(cat => [cat, cat === 'Tous' ? works.length : works.filter(w => w.category === cat).length])
+  )
+
+  const years = works.map(w => Number(w.year)).filter(Boolean)
+  const yearRange = years.length ? `${Math.min(...years)}—${Math.max(...years)}` : ''
+
   return (
     <section className={styles.section} id="portfolio">
       <div className={styles.inner}>
         <header className={styles.header}>
-          <RevealText>
-            <span className={styles.label}>Œuvres</span>
-          </RevealText>
-          <h2 className={styles.heading}>
-            <RevealText delay={0.12}>Portfolio</RevealText>
-          </h2>
+          <div>
+            <RevealText>
+              <span className={styles.label}>Œuvres</span>
+            </RevealText>
+            <h2 className={styles.heading}>
+              <RevealText delay={0.12}>Portfolio</RevealText>
+            </h2>
+          </div>
+          <span className={styles.stat}>{works.length} œuvres{yearRange ? ` · ${yearRange}` : ''}</span>
         </header>
 
         <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
-              onClick={() => setActive(cat)}
-              aria-pressed={active === cat}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories.map(cat => {
+            const count = counts[cat]
+            const disabled = cat !== 'Tous' && count === 0
+            return disabled ? (
+              <span key={cat} className={styles.filterDisabled} aria-disabled="true">
+                {cat} <span className={styles.filterCount}>—</span>
+              </span>
+            ) : (
+              <button
+                key={cat}
+                className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
+                onClick={() => setActive(cat)}
+                aria-pressed={active === cat}
+              >
+                {cat} <span className={styles.filterCount}>{count}</span>
+              </button>
+            )
+          })}
         </div>
 
         <div className={styles.grid}>
