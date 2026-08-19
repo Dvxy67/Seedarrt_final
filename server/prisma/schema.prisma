@@ -19,7 +19,6 @@ model Work {
   title         String
   category      String
   year          String
-  aspect        String
   imageUrl      String
   imagePublicId String?
   order         Int      @default(0)

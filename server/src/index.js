@@ -3,6 +3,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const contactRouter = require('./routes/contact')
 const authRouter = require('./routes/auth')
+const worksRouter = require('./routes/works')
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
@@ -16,6 +17,7 @@ app.use(express.json())
 
 app.use('/api/contact', contactRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/works', worksRouter)
 
 app.use(notFoundHandler)
 app.use(errorHandler)

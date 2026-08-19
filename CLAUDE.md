@@ -94,10 +94,10 @@ Drop `.glb` files in `client/public/models/`. Keep file sizes under 5 MB for web
 In `Portfolio.jsx`, edit the `works` array. Set `src` to a path relative to `client/public/` (or `null` to show a placeholder):
 
 ```js
-{ id: 1, title: 'Titre', category: 'Peinture', year: '2025', aspect: 'portrait', src: '/works/painting-01.jpg' }
+{ id: 1, title: 'Titre', category: 'Peinture', year: '2025', src: '/works/painting-01.jpg' }
 ```
 
-`aspect` controls the thumbnail ratio: `portrait` (3/4) · `square` (1/1) · `landscape` (4/3).
+The grid is masonry-based (`Portfolio.module.css`, CSS `columns`) — each image keeps its natural aspect ratio automatically, no `aspect` field needed.
 
 ## Email contact form
 
