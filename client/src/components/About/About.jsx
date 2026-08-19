@@ -14,8 +14,12 @@ export default function About() {
     const wrapper = wrapperRef.current
     if (!wrapper) return
 
-    const bgInterp   = gsap.utils.interpolate('#0f0b08', '#f2ede6')
-    const textInterp = gsap.utils.interpolate('#f2ede6', '#0f0b08')
+    const bgInterp    = gsap.utils.interpolate('#0f0b08', '#f2ede6')
+    const textInterp  = gsap.utils.interpolate('#f2ede6', '#0f0b08')
+    // Le texte "atténué" (--color-text-muted) doit lui aussi passer du clair
+    // (lisible sur fond sombre) au foncé (lisible sur fond clair) — sans ça,
+    // il reste gris clair sur fond clair en fin de scroll (contraste ~2,7:1).
+    const mutedInterp = gsap.utils.interpolate('#9a8f85', '#4a4038')
 
     const trigger = ScrollTrigger.create({
       trigger: wrapper,
@@ -27,20 +31,28 @@ export default function About() {
           backgroundColor: bgInterp(self.progress),
           color: textInterp(self.progress),
         })
+        gsap.set(wrapper, { '--color-text-muted': mutedInterp(self.progress) })
       },
-      onLeave: () => gsap.to('body', {
-        backgroundColor: '#0f0b08', color: '#f2ede6',
-        duration: 0.8, ease: 'power2.inOut',
-      }),
-      onLeaveBack: () => gsap.to('body', {
-        backgroundColor: '#0f0b08', color: '#f2ede6',
-        duration: 0.5, ease: 'power2.inOut',
-      }),
+      onLeave: () => {
+        gsap.to('body', {
+          backgroundColor: '#0f0b08', color: '#f2ede6',
+          duration: 0.8, ease: 'power2.inOut',
+        })
+        gsap.to(wrapper, { '--color-text-muted': '#9a8f85', duration: 0.8, ease: 'power2.inOut' })
+      },
+      onLeaveBack: () => {
+        gsap.to('body', {
+          backgroundColor: '#0f0b08', color: '#f2ede6',
+          duration: 0.5, ease: 'power2.inOut',
+        })
+        gsap.to(wrapper, { '--color-text-muted': '#9a8f85', duration: 0.5, ease: 'power2.inOut' })
+      },
     })
 
     return () => {
       trigger.kill()
       gsap.set('body', { clearProps: 'backgroundColor,color' })
+      gsap.set(wrapper, { clearProps: '--color-text-muted' })
     }
   }, [])
 
