@@ -71,6 +71,11 @@
   color: var(--color-bg);
 }
 
+.filter:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
 .filterCount {
   color: inherit;
   opacity: 0.6;

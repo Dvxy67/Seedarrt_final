@@ -54,7 +54,14 @@ Seedarrt_final/
 
 ## Animations
 
-All UI animations use **Framer Motion** (`framer-motion`): scroll-triggered reveals (`whileInView`), layout transitions for the portfolio filter (`layout` + `AnimatePresence`), and entrance animations. The 3D canvas has its own animation loop via R3F's `useFrame`.
+Most UI animations use **Framer Motion** (`framer-motion`): scroll-triggered reveals (`whileInView`), mount/unmount transitions (`AnimatePresence`), and entrance animations. The 3D canvas has its own animation loop via R3F's `useFrame`.
+
+**GSAP** (`gsap`) is also a dependency, used where Framer Motion doesn't fit:
+- `ScrollTrigger` — scroll-driven effects that aren't simple reveals (`About.jsx` color interpolation, `Creation.jsx` progress rail, `App.jsx` refresh on route/content changes).
+- `ScrollToPlugin` — the stepper's smooth-scroll-to-section in `Creation.jsx`.
+- `Flip` — DOM-position diffing for layout changes that CSS `columns` (masonry) can't do with Framer's `layout` prop, e.g. the Portfolio grid reflow on category filter change.
+
+Keep GSAP and Framer Motion scoped to different elements/concerns within a component — don't let both drive `transform`/`opacity` on the same DOM node at the same time, or one will silently overwrite the other's inline styles.
 
 ## Design system
 

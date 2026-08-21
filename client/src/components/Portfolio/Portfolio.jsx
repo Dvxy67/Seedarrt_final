@@ -1,7 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import gsap from 'gsap'
+import { Flip } from 'gsap/Flip'
 import styles from './Portfolio.module.css'
 import RevealText from '../ui/RevealText'
+
+gsap.registerPlugin(Flip)
 
 const categories = ['Tous', 'Peinture', '3D', 'Graphisme']
 
@@ -119,6 +123,7 @@ function WorkCard({ work, index, onClick }) {
   return (
     <motion.article
       className={styles.card}
+      data-flip-id={work.id}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
@@ -143,6 +148,11 @@ function WorkCard({ work, index, onClick }) {
 export default function Portfolio() {
   const [active, setActive] = useState('Tous')
   const [selected, setSelected] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  const gridRef = useRef(null)
+  const flipStateRef = useRef(null)
+  const isFirstRender = useRef(true)
 
   const filtered = active === 'Tous'
     ? works
@@ -151,6 +161,41 @@ export default function Portfolio() {
   const counts = Object.fromEntries(
     categories.map(cat => [cat, cat === 'Tous' ? works.length : works.filter(w => w.category === cat).length])
   )
+
+  const handleFilterClick = (cat) => {
+    if (cat === active || isAnimating) return
+
+    const nextFiltered = cat === 'Tous' ? works : works.filter(w => w.category === cat)
+    const nextIds = new Set(nextFiltered.map(w => w.id))
+    const survivorIds = filtered.filter(w => nextIds.has(w.id)).map(w => w.id)
+
+    if (survivorIds.length && gridRef.current) {
+      const selector = survivorIds.map(id => `[data-flip-id="${id}"]`).join(',')
+      const cards = gridRef.current.querySelectorAll(selector)
+      if (cards.length) flipStateRef.current = Flip.getState(cards)
+    }
+
+    setActive(cat)
+  }
+
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    if (!flipStateRef.current) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    setIsAnimating(true)
+    Flip.from(flipStateRef.current, {
+      duration: reduceMotion ? 0 : 0.7,
+      ease: 'power3.inOut',
+      stagger: 0.03,
+      onComplete: () => setIsAnimating(false),
+    })
+    flipStateRef.current = null
+  }, [active])
 
   const years = works.map(w => Number(w.year)).filter(Boolean)
   const yearRange = years.length ? `${Math.min(...years)}—${Math.max(...years)}` : ''
@@ -182,8 +227,9 @@ export default function Portfolio() {
               <button
                 key={cat}
                 className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
-                onClick={() => setActive(cat)}
+                onClick={() => handleFilterClick(cat)}
                 aria-pressed={active === cat}
+                disabled={isAnimating}
               >
                 {cat} <span className={styles.filterCount}>{count}</span>
               </button>
@@ -191,7 +237,7 @@ export default function Portfolio() {
           })}
         </div>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} ref={gridRef}>
           <AnimatePresence mode="popLayout">
             {filtered.map((work, i) => (
               <WorkCard key={work.id} work={work} index={i} onClick={setSelected} />
