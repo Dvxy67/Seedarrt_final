@@ -1,17 +1,18 @@
 .section {
   border-top: 1px solid var(--color-border);
+  scroll-margin-top: 6rem;
 }
 
 /* ── Inner ── */
 .inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--spacing-section) var(--side-padding);
+  padding: 6rem var(--side-padding) 3rem;
 }
 
 /* ── Titre ── */
 .titleBlock {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .label {
@@ -20,12 +21,12 @@
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
 }
 
 .heading {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 10vw, 11rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   font-weight: 300;
   line-height: 0.9;
   letter-spacing: -0.03em;
@@ -40,7 +41,7 @@
 .bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 9rem;
+  gap: 5rem;
   align-items: start;
 }
 
@@ -57,29 +58,15 @@
   color: var(--color-text);
   text-decoration: none;
   display: inline-block;
-  position: relative;
+  border-bottom: 1px solid rgba(196, 98, 58, 0.4);
   padding-bottom: 0.3rem;
-  margin-bottom: 2.8rem;
-  transition: color 0.35s ease;
-}
-
-.emailBig::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--color-accent);
-  transition: width 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  margin-bottom: 1.8rem;
+  transition: color 0.35s ease, border-color 0.35s ease;
 }
 
 .emailBig:hover {
   color: var(--color-accent);
-}
-
-.emailBig:hover::after {
-  width: 100%;
+  border-color: var(--color-accent);
 }
 
 /* ── Socials ── */
@@ -108,13 +95,13 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
 }
 
 .conversational {
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;
+  gap: 1.2rem;
 }
 
 .sentence {
@@ -128,24 +115,37 @@
 
 .fieldWrap {
   display: inline-block;
-  vertical-align: baseline;
+  vertical-align: middle;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .inlineInput {
-  background: transparent;
+  background: rgba(242, 237, 230, 0.045);
   border: none;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
   color: var(--color-accent);
   font-family: var(--font-display);
   font-size: inherit;
   font-weight: 300;
   font-style: italic;
-  padding: 0 0.1em 0.1em;
+  height: 48px;
+  padding: 0 0.6em;
   outline: none;
   min-width: 180px;
   width: 220px;
-  transition: border-color 0.3s ease;
-  line-height: inherit;
+  vertical-align: middle;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .inlineInput::placeholder {
@@ -154,27 +154,27 @@
 }
 
 .inlineInput:focus {
+  background: rgba(196, 98, 58, 0.1);
   border-bottom-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(196, 98, 58, 0.3);
 }
 
 .submit {
   align-self: flex-start;
-  background: none;
-  border: 1px solid rgba(184, 151, 90, 0.3);
-  color: var(--color-text);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: var(--color-bg);
   font-family: var(--font-body);
   font-size: 0.68rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   padding: 1rem 2.5rem;
   cursor: pointer;
-  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+  transition: opacity 0.35s ease;
 }
 
 .submit:hover:not(:disabled) {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-bg);
+  opacity: 0.85;
 }
 
 .submit:disabled {
@@ -197,7 +197,7 @@
 /* ── Footer ── */
 .footer {
   border-top: 1px solid var(--color-border);
-  padding: 2rem var(--side-padding);
+  padding: 1.4rem var(--side-padding);
   text-align: center;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
@@ -211,5 +211,5 @@
 }
 
 @media (max-width: 768px) {
-  .heading { font-size: clamp(3rem, 13vw, 6rem); }
+  .heading { font-size: clamp(2.6rem, 11vw, 4.5rem); }
 }

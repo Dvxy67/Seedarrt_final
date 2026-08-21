@@ -97,7 +97,9 @@ export default function Contact() {
               <p className={styles.sentence}>
                 Je m'appelle{' '}
                 <span className={styles.fieldWrap}>
+                  <label htmlFor="contact-name" className={styles.visuallyHidden}>Votre nom</label>
                   <input
+                    id="contact-name"
                     className={styles.inlineInput}
                     name="name"
                     type="text"
@@ -111,7 +113,9 @@ export default function Contact() {
               <p className={styles.sentence}>
                 Mon email est{' '}
                 <span className={styles.fieldWrap}>
+                  <label htmlFor="contact-email" className={styles.visuallyHidden}>Votre email</label>
                   <input
+                    id="contact-email"
                     className={styles.inlineInput}
                     name="email"
                     type="email"
@@ -125,7 +129,9 @@ export default function Contact() {
               <p className={styles.sentence}>
                 Je vous contacte pour{' '}
                 <span className={styles.fieldWrap}>
+                  <label htmlFor="contact-message" className={styles.visuallyHidden}>Votre projet</label>
                   <input
+                    id="contact-message"
                     className={styles.inlineInput}
                     name="message"
                     type="text"
