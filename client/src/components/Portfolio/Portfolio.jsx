@@ -152,8 +152,28 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
 }
 
 function WorkCard({ work, index, onClick }) {
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    const el = cardRef.current
+    const grid = el?.parentElement
+    if (!el || !grid) return
+
+    const updateSpan = () => {
+      const rowGap = parseFloat(getComputedStyle(grid).rowGap) || 0
+      const rowHeight = parseFloat(getComputedStyle(grid).gridAutoRows) || 1
+      const span = Math.ceil((el.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap))
+      el.style.setProperty('--row-span', String(span))
+    }
+
+    const ro = new ResizeObserver(updateSpan)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <motion.article
+      ref={cardRef}
       className={styles.card}
       data-flip-id={work.id}
       initial={{ opacity: 0, y: 24 }}
@@ -187,6 +207,22 @@ export default function Portfolio() {
   const flipStateRef = useRef(null)
   const isFirstRender = useRef(true)
   const heroStateRef = useRef(null)
+
+  useEffect(() => {
+    let timeout
+    const onResize = () => {
+      gridRef.current?.classList.add(styles.resizing)
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        gridRef.current?.classList.remove(styles.resizing)
+      }, 200)
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      clearTimeout(timeout)
+    }
+  }, [])
 
   const filtered = active === 'Tous'
     ? works
@@ -231,13 +267,24 @@ export default function Portfolio() {
     }
     if (!flipStateRef.current) return
 
+    // Recalcule les row-span avant de mesurer l'état final : la largeur des
+    // colonnes a pu changer (densité), donc la hauteur des cartes aussi,
+    // avant que le ResizeObserver de chaque carte n'ait eu l'occasion de réagir.
+    if (gridRef.current) {
+      const rowGap = parseFloat(getComputedStyle(gridRef.current).rowGap) || 0
+      const rowHeight = parseFloat(getComputedStyle(gridRef.current).gridAutoRows) || 1
+      gridRef.current.querySelectorAll(`.${styles.card}`).forEach(card => {
+        const span = Math.ceil((card.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap))
+        card.style.setProperty('--row-span', String(span))
+      })
+    }
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     setIsAnimating(true)
     Flip.from(flipStateRef.current, {
-      duration: reduceMotion ? 0 : 0.7,
-      ease: 'power3.inOut',
-      stagger: 0.03,
+      duration: reduceMotion ? 0 : 0.8,
+      ease: 'expo.inOut',
       onComplete: () => setIsAnimating(false),
     })
     flipStateRef.current = null
