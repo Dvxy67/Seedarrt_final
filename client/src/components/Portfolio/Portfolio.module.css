@@ -40,11 +40,20 @@
   line-height: 1;
 }
 
+/* Toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
 /* Filters */
 .filters {
   display: flex;
   gap: 0.4rem;
-  margin-bottom: 3.5rem;
   flex-wrap: wrap;
 }
 
@@ -93,10 +102,69 @@
   cursor: default;
 }
 
+/* View toggle */
+.viewToggle {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.viewBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.viewBtn:hover {
+  color: var(--color-text);
+  border-color: rgba(196, 98, 58, 0.25);
+}
+
+.viewBtn.viewActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.viewBtn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.viewIcon {
+  display: flex;
+  gap: 1.5px;
+  width: 1.15rem;
+  height: 1rem;
+}
+
+.viewIcon span {
+  flex: 1;
+  background: currentColor;
+  opacity: 0.85;
+}
+
 /* Grid — masonry via CSS columns */
 .grid {
   columns: 3;
   column-gap: 1.2rem;
+}
+
+.grid.gridMedium {
+  columns: 4;
+  column-gap: 1rem;
+}
+
+.grid.gridCompact {
+  columns: 5;
+  column-gap: 0.8rem;
 }
 
 /* Card */
@@ -150,12 +218,25 @@
   margin-top: 0.3rem;
 }
 
+@media (max-width: 1300px) {
+  .grid.gridCompact { columns: 4; }
+}
+
+@media (max-width: 1100px) {
+  .grid.gridMedium { columns: 3; }
+  .grid.gridCompact { columns: 3; }
+}
+
 @media (max-width: 900px) {
-  .grid { columns: 2; }
+  .grid,
+  .grid.gridMedium,
+  .grid.gridCompact { columns: 2; }
 }
 
 @media (max-width: 580px) {
-  .grid { columns: 1; }
+  .grid,
+  .grid.gridMedium,
+  .grid.gridCompact { columns: 1; }
 }
 
 /* Lightbox */

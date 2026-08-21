@@ -181,6 +181,7 @@ export default function Portfolio() {
   const [active, setActive] = useState('Tous')
   const [selected, setSelected] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [density, setDensity] = useState('large')
 
   const gridRef = useRef(null)
   const flipStateRef = useRef(null)
@@ -211,6 +212,18 @@ export default function Portfolio() {
     setActive(cat)
   }
 
+  const handleDensityClick = (mode) => {
+    if (mode === density || isAnimating) return
+
+    if (gridRef.current) {
+      const selector = filtered.map(w => `[data-flip-id="${w.id}"]`).join(',')
+      const cards = gridRef.current.querySelectorAll(selector)
+      if (cards.length) flipStateRef.current = Flip.getState(cards)
+    }
+
+    setDensity(mode)
+  }
+
   useLayoutEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false
@@ -228,7 +241,7 @@ export default function Portfolio() {
       onComplete: () => setIsAnimating(false),
     })
     flipStateRef.current = null
-  }, [active])
+  }, [active, density])
 
   const handleOpen = (work) => {
     const thumb = gridRef.current?.querySelector(`[data-flip-id="work-${work.id}"]`)
@@ -254,29 +267,64 @@ export default function Portfolio() {
           <span className={styles.stat}>{works.length} œuvres{yearRange ? ` · ${yearRange}` : ''}</span>
         </header>
 
-        <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
-          {categories.map(cat => {
-            const count = counts[cat]
-            const disabled = cat !== 'Tous' && count === 0
-            return disabled ? (
-              <span key={cat} className={styles.filterDisabled} aria-disabled="true">
-                {cat} <span className={styles.filterCount}>—</span>
-              </span>
-            ) : (
-              <button
-                key={cat}
-                className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
-                onClick={() => handleFilterClick(cat)}
-                aria-pressed={active === cat}
-                disabled={isAnimating}
-              >
-                {cat} <span className={styles.filterCount}>{count}</span>
-              </button>
-            )
-          })}
+        <div className={styles.toolbar}>
+          <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
+            {categories.map(cat => {
+              const count = counts[cat]
+              const disabled = cat !== 'Tous' && count === 0
+              return disabled ? (
+                <span key={cat} className={styles.filterDisabled} aria-disabled="true">
+                  {cat} <span className={styles.filterCount}>—</span>
+                </span>
+              ) : (
+                <button
+                  key={cat}
+                  className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
+                  onClick={() => handleFilterClick(cat)}
+                  aria-pressed={active === cat}
+                  disabled={isAnimating}
+                >
+                  {cat} <span className={styles.filterCount}>{count}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className={styles.viewToggle} role="group" aria-label="Densité d'affichage">
+            <button
+              className={`${styles.viewBtn} ${density === 'large' ? styles.viewActive : ''}`}
+              onClick={() => handleDensityClick('large')}
+              aria-pressed={density === 'large'}
+              aria-label="Vue large"
+              disabled={isAnimating}
+            >
+              <span className={styles.viewIcon}><span /><span /><span /></span>
+            </button>
+            <button
+              className={`${styles.viewBtn} ${density === 'medium' ? styles.viewActive : ''}`}
+              onClick={() => handleDensityClick('medium')}
+              aria-pressed={density === 'medium'}
+              aria-label="Vue moyenne"
+              disabled={isAnimating}
+            >
+              <span className={styles.viewIcon}><span /><span /><span /><span /></span>
+            </button>
+            <button
+              className={`${styles.viewBtn} ${density === 'compact' ? styles.viewActive : ''}`}
+              onClick={() => handleDensityClick('compact')}
+              aria-pressed={density === 'compact'}
+              aria-label="Vue compacte"
+              disabled={isAnimating}
+            >
+              <span className={styles.viewIcon}><span /><span /><span /><span /><span /></span>
+            </button>
+          </div>
         </div>
 
-        <div className={styles.grid} ref={gridRef}>
+        <div
+          className={`${styles.grid} ${density === 'medium' ? styles.gridMedium : ''} ${density === 'compact' ? styles.gridCompact : ''}`}
+          ref={gridRef}
+        >
           <AnimatePresence mode="popLayout">
             {filtered.map((work, i) => (
               <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} />
