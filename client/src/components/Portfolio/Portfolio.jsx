@@ -32,16 +32,48 @@ const works = [
   { id: 21, title: 'Peinture XII',                     category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7334.JPG' },
 ]
 
-function Lightbox({ work, works, onClose, onSelect }) {
+function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
   const idx = works.findIndex(w => w.id === work.id)
   const dialogRef = useRef(null)
+  const imgRef = useRef(null)
+  const heroPlayed = useRef(false)
+
+  const handleClose = () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const thumb = gridRef.current?.querySelector(`[data-flip-id="work-${work.id}"]`)
+    if (thumb && imgRef.current && !reduceMotion) {
+      const state = Flip.getState(imgRef.current)
+      const prevTransition = thumb.style.transition
+      thumb.style.transition = 'none'
+      Flip.from(state, {
+        targets: thumb,
+        duration: 0.5,
+        ease: 'power3.inOut',
+        scale: true,
+        onComplete: () => { thumb.style.transition = prevTransition },
+      })
+    }
+    onClose()
+  }
+
+  useLayoutEffect(() => {
+    if (heroPlayed.current || !heroState || !imgRef.current) return
+    heroPlayed.current = true
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    Flip.from(heroState, {
+      targets: imgRef.current,
+      duration: reduceMotion ? 0 : 0.55,
+      ease: 'power3.out',
+      scale: true,
+    })
+  }, [heroState])
 
   useEffect(() => {
     const previouslyFocused = document.activeElement
     dialogRef.current?.focus()
 
     const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') handleClose()
       if (e.key === 'ArrowLeft') onSelect(works[(idx - 1 + works.length) % works.length])
       if (e.key === 'ArrowRight') onSelect(works[(idx + 1) % works.length])
 
@@ -64,7 +96,7 @@ function Lightbox({ work, works, onClose, onSelect }) {
       window.removeEventListener('keydown', onKey)
       previouslyFocused?.focus?.()
     }
-  }, [idx, works, onClose, onSelect])
+  }, [idx, works, onSelect])
 
   return (
     <motion.div
@@ -78,13 +110,13 @@ function Lightbox({ work, works, onClose, onSelect }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      onClick={onClose}
+      onClick={handleClose}
     >
       <span className={styles.lightboxCounter}>
         {String(idx + 1).padStart(2, '0')} / {String(works.length).padStart(2, '0')}
       </span>
 
-      <button className={styles.closeBtn} onClick={onClose} aria-label="Fermer">×</button>
+      <button className={styles.closeBtn} onClick={handleClose} aria-label="Fermer">×</button>
 
       <button
         className={`${styles.navBtn} ${styles.navPrev}`}
@@ -101,7 +133,7 @@ function Lightbox({ work, works, onClose, onSelect }) {
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         onClick={(e) => e.stopPropagation()}
       >
-        <img src={work.src} alt={work.title} className={styles.lightboxImg} />
+        <img ref={imgRef} data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.lightboxImg} />
         <div className={styles.lightboxInfo}>
           <span className={styles.lightboxTitle}>{work.title}</span>
           <span className={styles.lightboxMeta}>{work.category} · {work.year}</span>
@@ -132,9 +164,9 @@ function WorkCard({ work, index, onClick }) {
     >
       <div className={styles.thumb}>
         {work.src ? (
-          <img src={work.src} alt={work.title} className={styles.image} loading="lazy" />
+          <img data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.image} loading="lazy" />
         ) : (
-          <div className={styles.placeholder} />
+          <div data-flip-id={`work-${work.id}`} className={styles.placeholder} />
         )}
       </div>
       <div className={styles.caption}>
@@ -153,6 +185,7 @@ export default function Portfolio() {
   const gridRef = useRef(null)
   const flipStateRef = useRef(null)
   const isFirstRender = useRef(true)
+  const heroStateRef = useRef(null)
 
   const filtered = active === 'Tous'
     ? works
@@ -197,6 +230,12 @@ export default function Portfolio() {
     flipStateRef.current = null
   }, [active])
 
+  const handleOpen = (work) => {
+    const thumb = gridRef.current?.querySelector(`[data-flip-id="work-${work.id}"]`)
+    heroStateRef.current = thumb ? Flip.getState(thumb) : null
+    setSelected(work)
+  }
+
   const years = works.map(w => Number(w.year)).filter(Boolean)
   const yearRange = years.length ? `${Math.min(...years)}—${Math.max(...years)}` : ''
 
@@ -240,7 +279,7 @@ export default function Portfolio() {
         <div className={styles.grid} ref={gridRef}>
           <AnimatePresence mode="popLayout">
             {filtered.map((work, i) => (
-              <WorkCard key={work.id} work={work} index={i} onClick={setSelected} />
+              <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} />
             ))}
           </AnimatePresence>
         </div>
@@ -253,6 +292,8 @@ export default function Portfolio() {
             works={filtered}
             onClose={() => setSelected(null)}
             onSelect={setSelected}
+            gridRef={gridRef}
+            heroState={heroStateRef.current}
           />
         )}
       </AnimatePresence>
