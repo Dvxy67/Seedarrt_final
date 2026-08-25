@@ -2,10 +2,21 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { Flip } from 'gsap/Flip'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Portfolio.module.css'
 import RevealText from '../ui/RevealText'
 
-gsap.registerPlugin(Flip)
+gsap.registerPlugin(Flip, ScrollTrigger)
+
+// Les images du portfolio (plusieurs Mo, parfois chargées en lazy) changent la
+// hauteur de leur carte à l'arrivée, ce qui décale tout ce qui suit (À propos,
+// Contact…). On recalcule les positions ScrollTrigger à chaque fois, en groupant
+// les recalculs rapprochés pour éviter un refresh par image.
+let scrollTriggerRefreshTimeout
+function scheduleScrollTriggerRefresh() {
+  clearTimeout(scrollTriggerRefreshTimeout)
+  scrollTriggerRefreshTimeout = setTimeout(() => ScrollTrigger.refresh(), 150)
+}
 
 const categories = ['Tous', 'Peinture', '3D', 'Graphisme']
 
@@ -164,6 +175,7 @@ function WorkCard({ work, index, onClick }) {
       const rowHeight = parseFloat(getComputedStyle(grid).gridAutoRows) || 1
       const span = Math.ceil((el.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap))
       el.style.setProperty('--row-span', String(span))
+      scheduleScrollTriggerRefresh()
     }
 
     const ro = new ResizeObserver(updateSpan)
