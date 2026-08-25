@@ -154,10 +154,6 @@ export default function Contact() {
 
         </div>
       </div>
-
-      <footer className={styles.footer}>
-        <p>© {new Date().getFullYear()} Seedarrt — Tous droits réservés</p>
-      </footer>
     </section>
   )
 }

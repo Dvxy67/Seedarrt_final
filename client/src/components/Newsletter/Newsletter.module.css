@@ -1,0 +1,261 @@
+.section {
+  padding: var(--spacing-section) var(--side-padding);
+  background: radial-gradient(120% 100% at 78% 50%, rgba(196, 98, 58, 0.05) 0%, transparent 60%);
+}
+
+.inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+/* ── Colonne gauche ── */
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.6rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.rule {
+  display: block;
+  width: 2.6rem;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 4.5vw, 3.8rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin-bottom: 2.4rem;
+}
+
+.heading em {
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.contents {
+  display: flex;
+  flex-direction: column;
+  max-width: 440px;
+  list-style: none;
+}
+
+.contentRow {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 1.2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.contentLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding-top: 0.15rem;
+}
+
+.contentText {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ── Colonne droite : carte formulaire ── */
+.card {
+  border: 1px solid rgba(196, 98, 58, 0.22);
+  background: rgba(26, 20, 16, 0.5);
+  padding: 2.4rem 2.2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardLabel {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 1.4rem;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.input {
+  height: 52px;
+  background: rgba(242, 237, 230, 0.05);
+  border: none;
+  border-bottom: 2px solid rgba(154, 143, 133, 0.5);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 300;
+  padding: 0 1rem;
+  outline: none;
+  margin-bottom: 1.2rem;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input:focus {
+  background: rgba(196, 98, 58, 0.1);
+  border-bottom-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(196, 98, 58, 0.3);
+}
+
+.inputError {
+  background: rgba(224, 86, 74, 0.08);
+  border-bottom-color: #e0564a;
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.submit {
+  height: 54px;
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.35s ease, color 0.35s ease, opacity 0.35s ease;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.liveRegion {
+  min-height: 2.2rem;
+}
+
+.note {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin-top: 1.2rem;
+}
+
+.errorNote {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #e0564a;
+  margin-top: 1.2rem;
+}
+
+/* ── Succès (remplace le formulaire) ── */
+.success {
+  padding: 0.2rem 0;
+}
+
+.successHead {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.7rem;
+}
+
+.successRule {
+  display: block;
+  width: 1.6rem;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+.successTitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--color-text);
+}
+
+.successBody {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ── Renvoi vers le contact ── */
+.altContact {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 1.6rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.altLink {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(196, 98, 58, 0.4);
+  padding-bottom: 0.15rem;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.altLink:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contentRow,
+  .right {
+    transition: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .inner { grid-template-columns: 1fr; gap: 3.5rem; }
+  .heading { font-size: clamp(2.4rem, 8vw, 3.2rem); }
+}
+
+@media (max-width: 560px) {
+  .contentRow { grid-template-columns: 1fr; gap: 0.3rem; }
+  .card { padding: 2rem 1.4rem; }
+}
