@@ -252,10 +252,26 @@
 
 @media (max-width: 960px) {
   .inner { grid-template-columns: 1fr; gap: 3.5rem; }
-  .heading { font-size: clamp(2.4rem, 8vw, 3.2rem); }
+  .heading { font-size: clamp(2.75rem, 8vw, 3.2rem); }
 }
 
 @media (max-width: 560px) {
   .contentRow { grid-template-columns: 1fr; gap: 0.3rem; }
   .card { padding: 2rem 1.4rem; }
+}
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: clamp(2.625rem, 8vw, 2.875rem); /* 42–46px */
+  }
+
+  .kicker,
+  .contentLabel,
+  .cardLabel {
+    font-size: 0.7rem;
+  }
+
+  .contentText {
+    font-size: 1rem;
+  }
 }

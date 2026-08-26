@@ -53,8 +53,131 @@
   color: var(--color-accent);
 }
 
-@media (max-width: 600px) {
+.burger {
+  display: none;
+}
+
+@media (max-width: 767px) {
   .links {
-    gap: 1.5rem;
+    display: none;
+  }
+
+  .nav.scrolled {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #0d0a08;
+  }
+
+  .burger {
+    display: flex;
+    position: relative;
+    z-index: 101;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .burger span {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--color-text);
+    transition: transform 0.3s ease, width 0.3s ease;
+  }
+
+  .burger span:last-child {
+    width: 16px;
+  }
+
+  .burgerOpen span:first-child {
+    width: 24px;
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .burgerOpen span:last-child {
+    width: 24px;
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  .mobileMenu {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: #0d0a08;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 var(--side-padding);
+  }
+
+  .mobileLinks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobileLink {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    min-height: 48px;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 2.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .mobileLink:hover {
+    color: var(--color-accent);
+  }
+
+  .mobileLinkIndex {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    width: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .mobileSocials {
+    margin-top: 3rem;
+  }
+
+  .mobileSocialsLabel {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .mobileSocialsRow {
+    display: flex;
+    gap: 1.6rem;
+  }
+
+  .mobileSocialsRow a {
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .mobileSocialsRow a:hover {
+    color: var(--color-accent);
   }
 }

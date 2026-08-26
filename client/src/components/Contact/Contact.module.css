@@ -198,6 +198,43 @@
   .bottom { grid-template-columns: 1fr; gap: 4rem; }
 }
 
-@media (max-width: 768px) {
-  .heading { font-size: clamp(2.6rem, 11vw, 4.5rem); }
+@media (max-width: 767px) {
+  .heading {
+    font-size: clamp(2.625rem, 8vw, 2.875rem); /* 42–46px */
+  }
+
+  .label {
+    font-size: 0.7rem;
+  }
+
+  .social {
+    font-size: 0.7rem;
+  }
+
+  .emailBig {
+    padding: 0.5rem 0;
+  }
+
+  .sentence {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .fieldWrap {
+    display: block;
+    width: 100%;
+  }
+
+  .inlineInput {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .submit {
+    align-self: stretch;
+    text-align: center;
+    min-height: 48px;
+  }
 }

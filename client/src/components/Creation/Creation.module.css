@@ -204,4 +204,29 @@
   .media {
     position: absolute;
   }
+
+  .tab {
+    min-height: 48px;
+    padding: 0.6rem 1.1rem;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    min-height: 0;
+  }
+
+  .bottom {
+    margin-top: 2.5rem;
+  }
+
+  .scenePlaceholder {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: #141b19;
+    border: 1px solid rgba(196, 98, 58, 0.15);
+  }
 }

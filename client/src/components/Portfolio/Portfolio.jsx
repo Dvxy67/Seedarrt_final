@@ -5,6 +5,7 @@ import { Flip } from 'gsap/Flip'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Portfolio.module.css'
 import RevealText from '../ui/RevealText'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 gsap.registerPlugin(Flip, ScrollTrigger)
 
@@ -162,7 +163,7 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
   )
 }
 
-function WorkCard({ work, index, onClick }) {
+function WorkCard({ work, index, onClick, eagerFirst }) {
   const cardRef = useRef(null)
 
   useEffect(() => {
@@ -196,7 +197,13 @@ function WorkCard({ work, index, onClick }) {
     >
       <div className={styles.thumb}>
         {work.src ? (
-          <img data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.image} loading="lazy" />
+          <img
+            data-flip-id={`work-${work.id}`}
+            src={work.src}
+            alt={work.title}
+            className={styles.image}
+            loading={eagerFirst && index === 0 ? 'eager' : 'lazy'}
+          />
         ) : (
           <div data-flip-id={`work-${work.id}`} className={styles.placeholder} />
         )}
@@ -214,6 +221,7 @@ export default function Portfolio() {
   const [selected, setSelected] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
   const [density, setDensity] = useState('large')
+  const isMobile = useIsMobile()
 
   const gridRef = useRef(null)
   const flipStateRef = useRef(null)
@@ -386,7 +394,7 @@ export default function Portfolio() {
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((work, i) => (
-              <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} />
+              <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} eagerFirst={isMobile} />
             ))}
           </AnimatePresence>
         </div>
