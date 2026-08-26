@@ -216,17 +216,180 @@
 @media (max-width: 767px) {
   .section {
     min-height: 0;
+    touch-action: pan-y;
+  }
+
+  .right {
+    order: 1;
+    height: 62vw;
+    min-height: 240px;
+    border: 1px solid var(--color-border);
+    box-sizing: border-box;
+  }
+
+  .dotsWrap {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 1.2rem;
+  }
+
+  .dotsRow {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .swipeHint {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .left {
+    order: 3;
+    padding: 1.6rem var(--side-padding) 2.5rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 1.2rem;
+  }
+
+  .stepName {
+    font-size: clamp(2.625rem, 10vw, 3.5rem); /* 42–56px */
+  }
+
+  .divider {
+    margin: 1.2rem 0;
+  }
+
+  .description {
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.7;
+    max-width: none;
   }
 
   .bottom {
-    margin-top: 2.5rem;
+    margin-top: 1.6rem;
+    gap: 1.6rem;
+  }
+
+  .tabs {
+    display: none;
+  }
+
+  .media {
+    padding: 0;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .scenePlaceholder {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 1.5rem;
     background: #141b19;
     border: 1px solid rgba(196, 98, 58, 0.15);
+  }
+
+  .scenePlaceholder span {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .mobileCaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    padding: 2.2rem 1.2rem 1rem;
+    background: linear-gradient(to top, rgba(13, 10, 8, 0.88), transparent);
+    pointer-events: none;
+  }
+
+  .mobileCaptionIndex {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+  }
+
+  .mobileCaptionName {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 1.4rem;
+    color: var(--color-text);
+  }
+
+  .dot {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .dotVisual {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-border);
+    transition: background 0.25s ease, width 0.25s ease;
+  }
+
+  .dotActive .dotVisual {
+    width: 30px;
+    background: var(--color-accent);
+  }
+
+  .navArrow {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--color-text);
+    opacity: 0.8;
+    text-shadow: 0 1px 6px rgba(13, 10, 8, 0.9), 0 0 16px rgba(13, 10, 8, 0.7);
+  }
+
+  .navArrowLeft {
+    left: 0.2rem;
+  }
+
+  .navArrowRight {
+    right: 0.2rem;
   }
 }

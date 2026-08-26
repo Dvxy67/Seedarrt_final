@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion'
 import styles from './Creation.module.css'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
@@ -42,6 +42,8 @@ export default function Creation() {
   const progressFillRef = useRef(null)
 
   useEffect(() => {
+    if (isMobile) return
+
     const wrapper = wrapperRef.current
     const progressTrack = progressTrackRef.current
     const progressFill = progressFillRef.current
@@ -74,9 +76,13 @@ export default function Creation() {
       trigger.kill()
       gsap.set(progressTrack, { autoAlpha: 0 })
     }
-  }, [])
+  }, [isMobile])
 
   const handleStepClick = (index) => {
+    if (isMobile) {
+      setActiveStep(index)
+      return
+    }
     const wrapper = wrapperRef.current
     if (!wrapper) return
     const scrollableRange = wrapper.offsetHeight - window.innerHeight
@@ -84,6 +90,36 @@ export default function Creation() {
     const targetY = wrapper.offsetTop + targetProgress * scrollableRange
     setActiveStep(index)
     gsap.to(window, { scrollTo: { y: targetY, autoKill: true }, duration: 1, ease: 'power2.inOut' })
+  }
+
+  const dragX = useMotionValue(0)
+  const springX = useSpring(dragX, { stiffness: 320, damping: 28 })
+  const hasNudged = useRef(false)
+
+  const handlePan = (_event, info) => {
+    const clamped = Math.max(-48, Math.min(48, info.offset.x))
+    dragX.set(clamped * 0.4)
+  }
+
+  const handlePanEnd = (_event, info) => {
+    const threshold = 60
+    if (info.offset.x < -threshold) {
+      setActiveStep(s => (s + 1) % steps.length)
+    } else if (info.offset.x > threshold) {
+      setActiveStep(s => (s - 1 + steps.length) % steps.length)
+    }
+    dragX.set(0)
+  }
+
+  const handleViewportEnter = () => {
+    if (!isMobile || hasNudged.current) return
+    hasNudged.current = true
+    animate(dragX, [0, -16, 6, 0], {
+      duration: 0.9,
+      times: [0, 0.45, 0.75, 1],
+      ease: 'easeInOut',
+      delay: 0.5,
+    })
   }
 
   const step = steps[activeStep]
@@ -94,7 +130,14 @@ export default function Creation() {
         <div ref={progressFillRef} className={styles.progressFill} />
       </div>
 
-      <section className={styles.section} id="creation">
+      <motion.section
+        className={styles.section}
+        id="creation"
+        onPan={isMobile ? handlePan : undefined}
+        onPanEnd={isMobile ? handlePanEnd : undefined}
+        onViewportEnter={isMobile ? handleViewportEnter : undefined}
+        viewport={{ once: true, amount: 0.4 }}
+      >
 
         <div className={styles.left}>
 
@@ -151,7 +194,10 @@ export default function Creation() {
           </div>
         </div>
 
-        <div className={styles.right}>
+        <motion.div
+          className={styles.right}
+          style={isMobile ? { x: springX } : undefined}
+        >
 
           {steps.map((s, i) => (
             <div
@@ -161,7 +207,9 @@ export default function Creation() {
               {s.type === 'image' ? (
                 <img src={s.src} alt={s.name} className={styles.image} loading="eager" />
               ) : isMobile ? (
-                <div className={styles.scenePlaceholder} />
+                <div className={styles.scenePlaceholder}>
+                  <span>Aperçu 3D — bientôt disponible</span>
+                </div>
               ) : (
                 <Suspense fallback={null}>
                   <StepScene />
@@ -169,9 +217,51 @@ export default function Creation() {
               )}
             </div>
           ))}
-        </div>
 
-      </section>
+          {isMobile && (
+            <>
+              <button
+                type="button"
+                className={`${styles.navArrow} ${styles.navArrowLeft}`}
+                onClick={() => handleStepClick((activeStep - 1 + steps.length) % steps.length)}
+                aria-label="Étape précédente"
+              >‹</button>
+              <button
+                type="button"
+                className={`${styles.navArrow} ${styles.navArrowRight}`}
+                onClick={() => handleStepClick((activeStep + 1) % steps.length)}
+                aria-label="Étape suivante"
+              >›</button>
+              <div className={styles.mobileCaption}>
+                <span className={styles.mobileCaptionIndex}>{step.index}</span>
+                <span className={styles.mobileCaptionName}>{step.name}</span>
+              </div>
+            </>
+          )}
+        </motion.div>
+
+        {isMobile && (
+          <div className={styles.dotsWrap}>
+            <div className={styles.dotsRow} role="tablist" aria-label="Étapes">
+              {steps.map((s, i) => (
+                <button
+                  key={s.name}
+                  type="button"
+                  role="tab"
+                  className={`${styles.dot} ${i === activeStep ? styles.dotActive : ''}`}
+                  aria-label={s.name}
+                  aria-selected={i === activeStep}
+                  onClick={() => handleStepClick(i)}
+                >
+                  <span className={styles.dotVisual} />
+                </button>
+              ))}
+            </div>
+            <span className={styles.swipeHint}>Glisser pour changer d'étape</span>
+          </div>
+        )}
+
+      </motion.section>
     </div>
   )
 }

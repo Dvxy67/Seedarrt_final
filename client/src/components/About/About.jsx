@@ -4,11 +4,20 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './About.module.css'
 import RevealText from '../ui/RevealText'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// Sur mobile, un flick de scroll couvre la distance de la transition bien plus
+// vite qu'un scroll bureau : le blanc n'est jamais "tenu", il est atteint pile
+// au moment de quitter la section puis repart aussitôt. On sature la courbe
+// plus tôt (à 55% du scroll) pour que le blanc reste stable jusqu'à la sortie,
+// sans changer la longueur du scroll elle-même.
+const MOBILE_HOLD_AT = 0.55
+
 export default function About() {
   const wrapperRef = useRef(null)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     const wrapper = wrapperRef.current
@@ -27,11 +36,12 @@ export default function About() {
       end: 'bottom bottom',
       scrub: true,
       onUpdate: (self) => {
+        const t = isMobile ? Math.min(1, self.progress / MOBILE_HOLD_AT) : self.progress
         gsap.set('body', {
-          backgroundColor: bgInterp(self.progress),
-          color: textInterp(self.progress),
+          backgroundColor: bgInterp(t),
+          color: textInterp(t),
         })
-        gsap.set(wrapper, { '--color-text-muted': mutedInterp(self.progress) })
+        gsap.set(wrapper, { '--color-text-muted': mutedInterp(t) })
       },
       onLeave: () => {
         gsap.to('body', {
@@ -54,7 +64,7 @@ export default function About() {
       gsap.set('body', { clearProps: 'backgroundColor,color' })
       gsap.set(wrapper, { clearProps: '--color-text-muted' })
     }
-  }, [])
+  }, [isMobile])
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
