@@ -19,6 +19,8 @@ model Work {
   title         String
   category      String
   year          String
+  description   String   @default("")
+  published     Boolean  @default(true)
   imageUrl      String
   imagePublicId String?
   order         Int      @default(0)
@@ -29,5 +31,7 @@ model Work {
 model Subscriber {
   id        Int      @id @default(autoincrement())
   email     String   @unique
+  active    Boolean  @default(true)
+  origin    String   @default("Site")
   createdAt DateTime @default(now())
 }
