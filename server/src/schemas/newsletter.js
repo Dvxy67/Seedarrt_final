@@ -5,4 +5,8 @@ const newsletterSchema = z.object({
   company: z.string().optional(), // honeypot : la route répond succès sans écrire si rempli
 })
 
-module.exports = { newsletterSchema }
+const unsubscribeSchema = z.object({
+  ids: z.array(z.coerce.number().int()).min(1),
+})
+
+module.exports = { newsletterSchema, unsubscribeSchema }

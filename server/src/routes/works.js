@@ -3,7 +3,7 @@ const multer = require('multer')
 const prisma = require('../lib/prisma')
 const cloudinary = require('../lib/cloudinary')
 const requireAuth = require('../middleware/requireAuth')
-const { workSchema } = require('../schemas/work')
+const { workSchema, workUpdateSchema, reorderSchema } = require('../schemas/work')
 
 const router = express.Router()
 
@@ -12,12 +12,18 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 })
 
-// Public : liste des œuvres, triée par `order`, avec filtre optionnel par catégorie.
+async function uploadImage(file) {
+  const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
+  const uploaded = await cloudinary.uploader.upload(dataUri, { folder: 'seedarrt' })
+  return { imageUrl: uploaded.secure_url, imagePublicId: uploaded.public_id }
+}
+
+// Public : liste des œuvres publiées, triée par `order`, avec filtre optionnel par catégorie.
 router.get('/', async (req, res, next) => {
   try {
     const { category } = req.query
     const works = await prisma.work.findMany({
-      where: category ? { category } : undefined,
+      where: { published: true, ...(category ? { category } : {}) },
       orderBy: { order: 'asc' },
     })
     res.json(works)
@@ -26,31 +32,101 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// Protégé : création d'une œuvre + upload de son image sur Cloudinary.
+// Protégé : liste complète (publiées + brouillons) pour le dashboard.
+router.get('/all', requireAuth, async (req, res, next) => {
+  try {
+    const works = await prisma.work.findMany({ orderBy: { order: 'asc' } })
+    res.json(works)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// Protégé : création. Accepte soit un fichier (upload Cloudinary), soit une image déjà
+// existante (imageUrl/imagePublicId) — ce second chemin sert à "Annuler" après une
+// suppression, sans avoir à ré-uploader le fichier perdu au moment du delete.
 router.post('/', requireAuth, upload.single('image'), async (req, res, next) => {
   try {
     const parsed = workSchema.safeParse(req.body)
     if (!parsed.success) {
       return res.status(400).json({ error: 'Données invalides' })
     }
-    if (!req.file) {
+
+    let image
+    if (req.file) {
+      image = await uploadImage(req.file)
+    } else if (req.body.imageUrl) {
+      image = { imageUrl: req.body.imageUrl, imagePublicId: req.body.imagePublicId || null }
+    } else {
       return res.status(400).json({ error: 'Image requise' })
     }
 
-    const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`
-    const uploaded = await cloudinary.uploader.upload(dataUri, { folder: 'seedarrt' })
-
     const order = await prisma.work.count()
     const work = await prisma.work.create({
-      data: {
-        ...parsed.data,
-        imageUrl: uploaded.secure_url,
-        imagePublicId: uploaded.public_id,
-        order,
-      },
+      data: { ...parsed.data, ...image, order },
     })
 
     res.status(201).json(work)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// Protégé : édition partielle, avec remplacement d'image optionnel.
+router.patch('/:id', requireAuth, upload.single('image'), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    const parsed = workUpdateSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Données invalides' })
+    }
+
+    const image = req.file ? await uploadImage(req.file) : {}
+
+    const work = await prisma.work.update({
+      where: { id },
+      data: { ...parsed.data, ...image },
+    })
+
+    res.json(work)
+  } catch (err) {
+    if (err.code === 'P2025') {
+      return res.status(404).json({ error: 'Œuvre introuvable' })
+    }
+    next(err)
+  }
+})
+
+// Protégé : suppression. L'asset Cloudinary n'est volontairement pas détruit — il reste
+// disponible pour recréer la pièce à l'identique si l'utilisateur clique "Annuler".
+router.delete('/:id', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id)
+    await prisma.work.delete({ where: { id } })
+    res.status(204).end()
+  } catch (err) {
+    if (err.code === 'P2025') {
+      return res.status(404).json({ error: 'Œuvre introuvable' })
+    }
+    next(err)
+  }
+})
+
+// Protégé : réordonnancement — `ids` reflète le nouvel ordre voulu, du premier au dernier.
+router.post('/reorder', requireAuth, async (req, res, next) => {
+  try {
+    const parsed = reorderSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Données invalides' })
+    }
+
+    await prisma.$transaction(
+      parsed.data.ids.map((id, index) =>
+        prisma.work.update({ where: { id }, data: { order: index } })
+      )
+    )
+
+    res.status(204).end()
   } catch (err) {
     next(err)
   }
