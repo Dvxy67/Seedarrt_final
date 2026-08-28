@@ -1,0 +1,275 @@
+@keyframes drawerIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 21, 18, 0.28);
+  z-index: 40;
+  animation: overlayIn 0.2s ease both;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 92vw;
+  background: #fff;
+  border-left: 1px solid var(--color-border);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  animation: drawerIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.header {
+  padding: 30px 34px 22px;
+  border-bottom: 1px solid #f2ede7;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.kicker {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 10px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.05;
+}
+
+.close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #9a8f85;
+  cursor: pointer;
+  background: none;
+  border: none;
+  flex-shrink: 0;
+}
+
+.close:hover {
+  color: var(--color-text);
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6f6459;
+  margin-bottom: 10px;
+}
+
+.dropzone {
+  height: 150px;
+  border: 1px dashed #d8d0c7;
+  background: #faf8f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.dropzone:hover,
+.dropzone[data-drag] {
+  border-color: var(--color-accent);
+}
+
+.dropText {
+  font-size: 13px;
+  color: #6f6459;
+}
+
+.dropHint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #b3a99f;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0 14px;
+  border: 1px solid #e5ded6;
+  background: #fff;
+  font-size: 15px;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+
+.input {
+  height: 46px;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+}
+
+.textarea {
+  height: 110px;
+  padding: 12px 14px;
+  line-height: 1.6;
+  resize: none;
+}
+
+.error {
+  padding: 12px 14px;
+  background: #fdf1ee;
+  border-left: 2px solid #b3261e;
+  font-size: 13px;
+  color: #8f2318;
+}
+
+.publishRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 22px;
+  border-top: 1px solid #f2ede7;
+}
+
+.publishTitle {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.publishHint {
+  font-size: 12px;
+  color: #9a8f85;
+}
+
+.switch {
+  width: 52px;
+  height: 28px;
+  border: 1px solid #d8d0c7;
+  background: none;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  box-sizing: border-box;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.switch[data-on] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  justify-content: flex-end;
+}
+
+.switchKnob {
+  width: 22px;
+  height: 22px;
+  background: #e5ded6;
+}
+
+.switch[data-on] .switchKnob {
+  background: #fff;
+}
+
+.footer {
+  padding: 22px 34px;
+  border-top: 1px solid #f2ede7;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.save {
+  flex: 1;
+  height: 50px;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.save:hover:not(:disabled) {
+  background: #a04d2c;
+}
+
+.save:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cancel {
+  height: 50px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6f6459;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  color: var(--color-text);
+}

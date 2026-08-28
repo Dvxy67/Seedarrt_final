@@ -1,0 +1,161 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-bg);
+}
+
+.sidebar {
+  width: 252px;
+  min-width: 252px;
+  border-right: 1px solid var(--color-border);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebarHeader {
+  padding: 30px 26px 26px;
+  border-bottom: 1px solid #f2ede7;
+}
+
+.mark {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-top: 8px;
+}
+
+.nav {
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem,
+.navItemActive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 12px 0 14px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  font-size: 14px;
+  color: #6f6459;
+  text-align: left;
+}
+
+.navItem:hover {
+  background: #faf8f6;
+}
+
+.navItemActive {
+  padding: 0 12px;
+  background: #faf6f2;
+  border-left: 2px solid var(--color-accent);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #b3a99f;
+}
+
+.countActive {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-accent);
+}
+
+.sidebarFooter {
+  margin-top: auto;
+  padding: 20px 26px 26px;
+  border-top: 1px solid #f2ede7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.siteLink {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9a8f85;
+  cursor: pointer;
+}
+
+.siteLink:hover {
+  color: var(--color-accent);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  background: #f2ede7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: #6f6459;
+  flex-shrink: 0;
+}
+
+.identityText {
+  min-width: 0;
+}
+
+.identityName {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.identityEmail {
+  font-size: 11px;
+  color: #9a8f85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
