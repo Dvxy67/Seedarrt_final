@@ -23,7 +23,6 @@
   position: relative;
 }
 
-.photoPlaceholder,
 .photo {
   width: 100%;
   max-height: 65vh;
@@ -81,14 +80,6 @@
   color: var(--color-text-muted);
 }
 
-.wip {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-style: italic;
-  color: var(--color-text-muted);
-  letter-spacing: 0.08em;
-}
-
 .disciplines {
   display: flex;
   flex-wrap: wrap;
@@ -120,7 +111,6 @@
     order: 1;
   }
 
-  .photoPlaceholder,
   .photo {
     max-height: none;
     aspect-ratio: 16 / 9;

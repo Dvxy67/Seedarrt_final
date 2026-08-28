@@ -58,11 +58,16 @@
 }
 
 @media (max-width: 767px) {
+  .nav {
+    padding: 1.1rem var(--side-padding);
+  }
+
   .links {
     display: none;
   }
 
   .nav.scrolled {
+    padding: 0.6rem var(--side-padding);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: #0d0a08;

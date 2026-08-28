@@ -23,6 +23,12 @@
   white-space: nowrap;
 }
 
+.error {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
 .label {
   display: block;
   font-size: 0.68rem;

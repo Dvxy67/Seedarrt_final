@@ -281,3 +281,156 @@
   font-size: 12px;
   color: #9a8f85;
 }
+
+/* ---------- Mobile ---------- */
+
+.mobileList {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .header {
+    padding: 18px 20px 0;
+  }
+
+  .headerTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 18px;
+  }
+
+  .title {
+    font-size: 30px;
+    margin-bottom: 6px;
+  }
+
+  .exportButton {
+    align-self: stretch;
+    justify-content: center;
+    height: 46px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+  }
+
+  .statCard {
+    padding: 18px 20px;
+  }
+
+  .statCard:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .statValue,
+  .statValueAccent {
+    font-size: 30px;
+  }
+
+  .toolbar {
+    padding: 20px 0;
+  }
+
+  .search {
+    width: 100%;
+  }
+
+  .selection {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .section {
+    padding: 0 20px 100px;
+  }
+
+  .table {
+    display: none;
+  }
+
+  .mobileList {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mobileRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f4efe9;
+  }
+
+  .mobileRowMain {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobileEmail {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobileRowMeta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  .mobileDate {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #9a8f85;
+  }
+
+  .mobileDivider {
+    width: 1px;
+    height: 9px;
+    background: var(--color-border);
+  }
+
+  .mobileOrigin {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b3a99f;
+  }
+
+  .mobileUnsubBtn {
+    height: 36px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid #e5ded6;
+    color: #6f6459;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .mobileOutBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #9a8f85;
+    white-space: nowrap;
+  }
+
+  .footer {
+    margin-top: 16px;
+  }
+
+  .footerNote {
+    display: none;
+  }
+}

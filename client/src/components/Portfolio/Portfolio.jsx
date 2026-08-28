@@ -21,29 +21,6 @@ function scheduleScrollTriggerRefresh() {
 
 const categories = ['Tous', 'Peinture', '3D', 'Graphisme']
 
-const works = [
-  { id: 4,  title: 'Directly in the cave',             category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/5_directly in the cave_oil painting_2024_100x75cm 2.JPG' },
-  { id: 10, title: 'Peinture I',                       category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/FullSizeRender.JPG' },
-  { id: 18, title: 'Peinture X',                       category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7172.JPG' },
-  { id: 9,  title: 'Death of the giants creatures',    category: 'Peinture', year: '2025', aspect: 'portrait',  src: '/works/11_Death of the giants creatures, their death, creator of a new life_oil paintings_2025_150x100cm 2.JPG' },
-  { id: 1,  title: 'I came across the rainforest',     category: 'Peinture', year: '2025', aspect: 'portrait',  src: '/works/1_I came across the rainforest_oil painting_2025_75x60cm 2.JPG' },
-  { id: 2,  title: 'See these creatures propagating',  category: 'Peinture', year: '2025', aspect: 'landscape', src: '/works/2_See these creatures propagating_oil painting_2025_40x60cm 2.JPG' },
-  { id: 3,  title: 'Differents ways to bloom',         category: 'Peinture', year: '2025', aspect: 'landscape', src: '/works/4_Differents ways to bloom_oil painting_2025_50x75cm 2.JPG' },
-  { id: 5,  title: 'Tree of life cycle',               category: 'Peinture', year: '2025', aspect: 'landscape', src: '/works/6_Tree of life cycle, two faces, plants and mushrooms breathing_oil paintings_2025_60x85cm 2.jpg' },
-  { id: 6,  title: 'Cave floor, part 1',               category: 'Peinture', year: '2025', aspect: 'portrait',  src: '/works/7_Cave floor, part 1 glowing mushroom_oil paintings_2025_80x50cm 2.JPG' },
-  { id: 8,  title: 'The outcomes of this trippy life', category: 'Peinture', year: '2024', aspect: 'landscape', src: '/works/10_The outcomes of this trippy life, the strange lanscape blurred by the mist_oil paintings_2024_40x60cm 2.JPG' },
-  { id: 11, title: 'Peinture II',                      category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_4681.PNG' },
-  { id: 12, title: 'Peinture III',                     category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_6481 2.jpg' },
-  { id: 13, title: 'Peinture IV',                      category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7101.JPG' },
-  { id: 14, title: 'Peinture V',                       category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7105.JPG' },
-  { id: 15, title: 'Peinture VI',                      category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7107.JPG' },
-  { id: 16, title: 'Peinture VII',                     category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7132.JPG' },
-  { id: 17, title: 'Peinture VIII',                    category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7145.JPG' },
-  { id: 19, title: 'Peinture IX',                      category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7331.JPG' },
-  { id: 20, title: 'Peinture XI',                      category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7332.JPG' },
-  { id: 21, title: 'Peinture XII',                     category: 'Peinture', year: '2024', aspect: 'portrait',  src: '/works/IMG_7334.JPG' },
-]
-
 function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
   const idx = works.findIndex(w => w.id === work.id)
   const dialogRef = useRef(null)
@@ -217,6 +194,9 @@ function WorkCard({ work, index, onClick, eagerFirst }) {
 }
 
 export default function Portfolio() {
+  const [works, setWorks] = useState([])
+  const [loaded, setLoaded] = useState(false)
+  const [loadError, setLoadError] = useState(false)
   const [active, setActive] = useState('Tous')
   const [selected, setSelected] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -227,6 +207,28 @@ export default function Portfolio() {
   const flipStateRef = useRef(null)
   const isFirstRender = useRef(true)
   const heroStateRef = useRef(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/works')
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur serveur')
+        return res.json()
+      })
+      .then(data => {
+        if (cancelled) return
+        setWorks(data.map(w => ({ id: w.id, title: w.title, category: w.category, year: w.year, src: w.imageUrl })))
+        setLoaded(true)
+        scheduleScrollTriggerRefresh()
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadError(true)
+          setLoaded(true)
+        }
+      })
+    return () => { cancelled = true }
+  }, [])
 
   useEffect(() => {
     let timeout
@@ -331,73 +333,81 @@ export default function Portfolio() {
               <RevealText delay={0.12}>Portfolio</RevealText>
             </h2>
           </div>
-          <span className={styles.stat}>{works.length} œuvres{yearRange ? ` · ${yearRange}` : ''}</span>
+          {loaded && !loadError && (
+            <span className={styles.stat}>{works.length} œuvres{yearRange ? ` · ${yearRange}` : ''}</span>
+          )}
         </header>
 
-        <div className={styles.toolbar}>
-          <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
-            {categories.map(cat => {
-              const count = counts[cat]
-              const disabled = cat !== 'Tous' && count === 0
-              return disabled ? (
-                <span key={cat} className={styles.filterDisabled} aria-disabled="true">
-                  {cat} <span className={styles.filterCount}>—</span>
-                </span>
-              ) : (
+        {loadError ? (
+          <p className={styles.error}>Le portfolio n'a pas pu être chargé pour le moment.</p>
+        ) : loaded && (
+          <>
+            <div className={styles.toolbar}>
+              <div className={styles.filters} role="group" aria-label="Filtrer par catégorie">
+                {categories.map(cat => {
+                  const count = counts[cat]
+                  const disabled = cat !== 'Tous' && count === 0
+                  return disabled ? (
+                    <span key={cat} className={styles.filterDisabled} aria-disabled="true">
+                      {cat} <span className={styles.filterCount}>—</span>
+                    </span>
+                  ) : (
+                    <button
+                      key={cat}
+                      className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
+                      onClick={() => handleFilterClick(cat)}
+                      aria-pressed={active === cat}
+                      disabled={isAnimating}
+                    >
+                      {cat} <span className={styles.filterCount}>{count}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className={styles.viewToggle} role="group" aria-label="Densité d'affichage">
                 <button
-                  key={cat}
-                  className={`${styles.filter} ${active === cat ? styles.filterActive : ''}`}
-                  onClick={() => handleFilterClick(cat)}
-                  aria-pressed={active === cat}
+                  className={`${styles.viewBtn} ${density === 'large' ? styles.viewActive : ''}`}
+                  onClick={() => handleDensityClick('large')}
+                  aria-pressed={density === 'large'}
+                  aria-label="Vue large"
                   disabled={isAnimating}
                 >
-                  {cat} <span className={styles.filterCount}>{count}</span>
+                  <span className={styles.viewIcon}><span /><span /><span /></span>
                 </button>
-              )
-            })}
-          </div>
+                <button
+                  className={`${styles.viewBtn} ${density === 'medium' ? styles.viewActive : ''}`}
+                  onClick={() => handleDensityClick('medium')}
+                  aria-pressed={density === 'medium'}
+                  aria-label="Vue moyenne"
+                  disabled={isAnimating}
+                >
+                  <span className={styles.viewIcon}><span /><span /><span /><span /></span>
+                </button>
+                <button
+                  className={`${styles.viewBtn} ${density === 'compact' ? styles.viewActive : ''}`}
+                  onClick={() => handleDensityClick('compact')}
+                  aria-pressed={density === 'compact'}
+                  aria-label="Vue compacte"
+                  disabled={isAnimating}
+                >
+                  <span className={styles.viewIcon}><span /><span /><span /><span /><span /></span>
+                </button>
+              </div>
+            </div>
 
-          <div className={styles.viewToggle} role="group" aria-label="Densité d'affichage">
-            <button
-              className={`${styles.viewBtn} ${density === 'large' ? styles.viewActive : ''}`}
-              onClick={() => handleDensityClick('large')}
-              aria-pressed={density === 'large'}
-              aria-label="Vue large"
-              disabled={isAnimating}
+            <div
+              className={`${styles.grid} ${density === 'medium' ? styles.gridMedium : ''} ${density === 'compact' ? styles.gridCompact : ''}`}
+              ref={gridRef}
             >
-              <span className={styles.viewIcon}><span /><span /><span /></span>
-            </button>
-            <button
-              className={`${styles.viewBtn} ${density === 'medium' ? styles.viewActive : ''}`}
-              onClick={() => handleDensityClick('medium')}
-              aria-pressed={density === 'medium'}
-              aria-label="Vue moyenne"
-              disabled={isAnimating}
-            >
-              <span className={styles.viewIcon}><span /><span /><span /><span /></span>
-            </button>
-            <button
-              className={`${styles.viewBtn} ${density === 'compact' ? styles.viewActive : ''}`}
-              onClick={() => handleDensityClick('compact')}
-              aria-pressed={density === 'compact'}
-              aria-label="Vue compacte"
-              disabled={isAnimating}
-            >
-              <span className={styles.viewIcon}><span /><span /><span /><span /><span /></span>
-            </button>
-          </div>
-        </div>
-
-        <div
-          className={`${styles.grid} ${density === 'medium' ? styles.gridMedium : ''} ${density === 'compact' ? styles.gridCompact : ''}`}
-          ref={gridRef}
-        >
-          <AnimatePresence mode="popLayout">
-            {filtered.map((work, i) => (
-              <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} eagerFirst={isMobile} />
-            ))}
-          </AnimatePresence>
-        </div>
+              <AnimatePresence mode="popLayout">
+                {filtered.map((work, i) => (
+                  <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} eagerFirst={isMobile} />
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
       </div>
 
       <AnimatePresence>

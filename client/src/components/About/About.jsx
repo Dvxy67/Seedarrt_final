@@ -79,8 +79,12 @@ export default function About() {
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.95, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {/* Replace with: <img src="/portrait.jpg" alt="Nom de l'artiste" className={styles.photo} /> */}
-              <div className={styles.photoPlaceholder} />
+              {/* Peinture en attendant un vrai portrait de l'artiste */}
+              <img
+                src="/works/5_directly in the cave_oil painting_2024_100x75cm 2.JPG"
+                alt=""
+                className={styles.photo}
+              />
               <div className={styles.frame} />
             </motion.div>
           </div>
@@ -92,8 +96,8 @@ export default function About() {
 
             <h2 className={styles.heading}>
               <RevealText delay={0.1}>Une démarche</RevealText>
-              <RevealText delay={0.2}><em>entre blablabla</em></RevealText>
-              <RevealText delay={0.3}>et blablabla</RevealText>
+              <RevealText delay={0.2}><em>entre le vivant</em></RevealText>
+              <RevealText delay={0.3}>et le minéral</RevealText>
             </h2>
 
             <motion.div
@@ -103,7 +107,16 @@ export default function About() {
               viewport={{ once: true }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <p className={styles.wip}>Work in progress</p>
+              <p>
+                Peinture, sculpture numérique et graphisme se répondent dans une même recherche :
+                donner forme à ce qui hésite entre organique et minéral, entre ce qui pousse et ce
+                qui se fige. Je pars d'une intuition, d'une texture ou d'une couleur, et je laisse
+                chaque pièce se construire lentement, sans idée arrêtée de son point d'arrivée.
+              </p>
+              <p>
+                Peintre depuis 2018, j'explore aujourd'hui les mêmes obsessions à travers plusieurs
+                médiums, en cherchant toujours le moins mais mieux plutôt que l'accumulation.
+              </p>
             </motion.div>
 
             <motion.div

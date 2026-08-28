@@ -148,6 +148,40 @@ export default function Newsletter({ subscribers, onUnsubscribe, onExport }) {
           )}
         </div>
 
+        <div className={styles.mobileList}>
+          {shown.map((s) => (
+            <div key={s.id} className={styles.mobileRow}>
+              <div className={styles.mobileRowMain}>
+                <div className={styles.mobileEmail}>{s.email}</div>
+                <div className={styles.mobileRowMeta}>
+                  <span className={styles.mobileDate}>{formatDate(s.createdAt)}</span>
+                  <span className={styles.mobileDivider} />
+                  <span className={styles.mobileOrigin}>{s.origin}</span>
+                </div>
+              </div>
+              {s.active ? (
+                <button
+                  className={styles.mobileUnsubBtn}
+                  onClick={() => onUnsubscribe([s.id])}
+                >
+                  Désinscrire
+                </button>
+              ) : (
+                <div className={styles.mobileOutBadge}>
+                  <span className={styles.dotOut} />
+                  Désinscrit
+                </div>
+              )}
+            </div>
+          ))}
+          {shown.length === 0 && (
+            <div className={styles.empty}>
+              <div className={styles.emptyTitle}>Aucune adresse trouvée</div>
+              <p className={styles.emptyText}>Aucun abonné ne correspond à cette recherche.</p>
+            </div>
+          )}
+        </div>
+
         <div className={styles.footer}>
           <div className={styles.footerCount}>
             {shown.length} adresse{shown.length !== 1 ? 's' : ''} affichée

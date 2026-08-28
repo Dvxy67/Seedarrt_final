@@ -2,6 +2,10 @@
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
+@keyframes sheetIn {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
 @keyframes overlayIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -272,4 +276,36 @@
 
 .cancel:hover {
   color: var(--color-text);
+}
+
+@media (max-width: 767px) {
+  .drawer {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+    animation: sheetIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .header {
+    padding: 20px 20px 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .body {
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .footer {
+    padding: 16px 20px 22px;
+  }
 }

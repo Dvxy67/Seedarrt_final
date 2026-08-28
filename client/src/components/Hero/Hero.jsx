@@ -49,9 +49,7 @@ export default function Hero() {
             <p className={styles.mobileText}>
               Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.
             </p>
-            <div className={styles.mobileImagePlaceholder}>
-              <span>Lettrage — image à venir</span>
-            </div>
+            <img src="/works/IMG_4681.PNG" alt="Seedarrt" className={styles.mobileImage} />
           </div>
         ) : (
           <>

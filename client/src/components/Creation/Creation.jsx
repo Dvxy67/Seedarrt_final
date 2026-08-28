@@ -16,7 +16,7 @@ const steps = [
     name: 'Objet 3D',
     description: 'Sculpture numérique et modélisation. Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.',
     type: 'scene',
-    src: null,
+    src: '/works/1_I came across the rainforest_oil painting_2025_75x60cm 2.JPG',
   },
   {
     index: '02',
@@ -202,9 +202,9 @@ export default function Creation() {
           {steps.map((s, i) => (
             <div
               key={s.name}
-              className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''} ${s.type === 'scene' ? styles.mediaScene : ''}`}
+              className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''} ${s.type === 'scene' && !(isMobile && s.src) ? styles.mediaScene : ''}`}
             >
-              {s.type === 'image' ? (
+              {s.type === 'image' || (isMobile && s.src) ? (
                 <img src={s.src} alt={s.name} className={styles.image} loading="eager" />
               ) : isMobile ? (
                 <div className={styles.scenePlaceholder}>

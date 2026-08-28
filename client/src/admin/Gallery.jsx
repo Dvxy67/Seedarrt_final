@@ -8,6 +8,7 @@ export default function Gallery({ works, onOpenNew, onEdit, onTogglePublish, onD
   const [search, setSearch] = useState('')
   const [mode, setMode] = useState('grid')
   const [confirmId, setConfirmId] = useState(null)
+  const [reorder, setReorder] = useState(false)
 
   const shown = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -89,6 +90,18 @@ export default function Gallery({ works, onOpenNew, onEdit, onTogglePublish, onD
             </div>
           </div>
         </div>
+
+        <div className={styles.mobileMetaRow}>
+          <div className={styles.mobileMeta}>
+            {works.length} pièce{works.length !== 1 ? 's' : ''}, {drafts} en brouillon
+          </div>
+          <button
+            className={reorder ? styles.reorderBtnActive : styles.reorderBtn}
+            onClick={() => setReorder((v) => !v)}
+          >
+            {reorder ? 'Terminer' : 'Réordonner'}
+          </button>
+        </div>
       </header>
 
       <section className={styles.section}>
@@ -109,7 +122,9 @@ export default function Gallery({ works, onOpenNew, onEdit, onTogglePublish, onD
               Tout afficher
             </button>
           </div>
-        ) : mode === 'grid' ? (
+        ) : (
+          <>
+          {mode === 'grid' ? (
           <div className={styles.grid}>
             {shown.map((p) => (
               <div key={p.id} className={styles.card}>
@@ -226,6 +241,62 @@ export default function Gallery({ works, onOpenNew, onEdit, onTogglePublish, onD
               </div>
             ))}
           </div>
+          )}
+
+          <div className={styles.mobileList}>
+            {shown.map((p) => (
+              <div key={p.id} className={styles.mobileCard}>
+                <div className={styles.mobileThumb}>
+                  <img src={p.imageUrl} alt={p.title} className={styles.mobileThumbImg} />
+                </div>
+                <div className={styles.mobileCardBody}>
+                  <div className={styles.mobileCardTop}>
+                    <div className={styles.mobileCardTitle}>{p.title}</div>
+                    <div className={styles.cardYear}>{p.year}</div>
+                  </div>
+                  <div className={styles.mobileCardMeta}>
+                    <span className={styles.cardCat}>{p.category}</span>
+                    <span className={styles.mobileCardDivider} />
+                    {p.published ? (
+                      <span className={styles.statusPub}>
+                        <span className={styles.dotPub} />
+                        Publié
+                      </span>
+                    ) : (
+                      <span className={styles.statusDraft}>
+                        <span className={styles.dotDraft} />
+                        Brouillon
+                      </span>
+                    )}
+                  </div>
+
+                  {reorder ? (
+                    <div className={styles.mobileReorderRow}>
+                      <button className={styles.mobileReorderBtn} onClick={() => onMove(p.id, -1)}>
+                        ▲ Monter
+                      </button>
+                      <button className={styles.mobileReorderBtn} onClick={() => onMove(p.id, 1)}>
+                        ▼ Descendre
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={styles.mobileActionsRow}>
+                      <button className={styles.mobileActionEdit} onClick={() => onEdit(p)}>
+                        Modifier
+                      </button>
+                      <button className={styles.mobileActionToggle} onClick={() => onTogglePublish(p)}>
+                        {p.published ? 'Masquer' : 'Publier'}
+                      </button>
+                      <button className={styles.mobileActionDelete} onClick={() => onDelete(p)}>
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          </>
         )}
       </section>
     </div>

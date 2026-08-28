@@ -184,6 +184,7 @@ export default function Dashboard({ onLogout }) {
   }
 
   const activeSubscribers = subscribers.filter((s) => s.active).length
+  const openNewDrawer = () => setDrawer({ mode: 'new' })
 
   return (
     <div className={styles.layout}>
@@ -231,11 +232,27 @@ export default function Dashboard({ onLogout }) {
         </div>
       </aside>
 
+      <header className={styles.mobileHeader}>
+        <div>
+          <div className={styles.mark}>Seedarrt</div>
+          <div className={styles.eyebrow}>Administration</div>
+        </div>
+        <button
+          className={styles.mobileAvatar}
+          onClick={() => {
+            if (window.confirm('Se déconnecter ?')) onLogout()
+          }}
+          aria-label="Déconnexion"
+        >
+          {email ? email[0].toUpperCase() : 'S'}
+        </button>
+      </header>
+
       <main className={styles.content}>
         {view === 'gallery' ? (
           <Gallery
             works={works}
-            onOpenNew={() => setDrawer({ mode: 'new' })}
+            onOpenNew={openNewDrawer}
             onEdit={(work) => setDrawer({ mode: 'edit', work })}
             onTogglePublish={handleTogglePublish}
             onDelete={handleDelete}
@@ -249,6 +266,31 @@ export default function Dashboard({ onLogout }) {
           />
         )}
       </main>
+
+      {view === 'gallery' && (
+        <button className={styles.fab} onClick={openNewDrawer}>
+          <span className={styles.fabPlus}>+</span>
+          <span>Ajouter une pièce</span>
+        </button>
+      )}
+
+      <nav className={styles.mobileNav}>
+        <button
+          className={view === 'gallery' ? styles.mobileNavItemActive : styles.mobileNavItem}
+          onClick={() => setView('gallery')}
+        >
+          Galerie
+        </button>
+        <button
+          className={view === 'newsletter' ? styles.mobileNavItemActive : styles.mobileNavItem}
+          onClick={() => setView('newsletter')}
+        >
+          Infolettre
+        </button>
+        <a href="/" className={styles.mobileNavItem}>
+          Le site ↗
+        </a>
+      </nav>
 
       {drawer && (
         <PieceDrawer

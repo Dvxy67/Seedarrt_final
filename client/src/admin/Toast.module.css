@@ -35,3 +35,13 @@
   cursor: pointer;
   white-space: nowrap;
 }
+
+@media (max-width: 767px) {
+  .toast {
+    bottom: 80px;
+    width: calc(100% - 40px);
+    max-width: 342px;
+    justify-content: space-between;
+    gap: 16px;
+  }
+}
