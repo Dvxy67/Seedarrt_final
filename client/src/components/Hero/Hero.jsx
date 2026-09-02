@@ -49,7 +49,7 @@ export default function Hero() {
             <p className={styles.mobileText}>
               Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.
             </p>
-            <img src="/works/IMG_4681.PNG" alt="Seedarrt" className={styles.mobileImage} />
+            <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.mobileImage} />
           </div>
         ) : (
           <>
@@ -70,7 +70,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <img src="/works/IMG_4681.PNG" alt="Seedarrt" className={styles.logo} />
+              <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.logo} />
             </motion.div>
 
             <motion.p

@@ -7,6 +7,7 @@ dist/
 *.db
 *.db-journal
 dossier-tfe/
+client/public/video/
 Audit UI-UX Seedarrt.dc.html
 Mockups Seedarrt.dc.html
 *.md

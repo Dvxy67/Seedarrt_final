@@ -9,13 +9,29 @@ const router = express.Router()
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 15 * 1024 * 1024 },
 })
+
+const uploadFields = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'model', maxCount: 1 },
+])
 
 async function uploadImage(file) {
   const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
   const uploaded = await cloudinary.uploader.upload(dataUri, { folder: 'seedarrt' })
   return { imageUrl: uploaded.secure_url, imagePublicId: uploaded.public_id }
+}
+
+// Les .glb ne sont ni une image ni une vidéo pour Cloudinary : resource_type
+// 'raw' les stocke et les sert tels quels (mêmes stockage/CDN, pas de transformation).
+async function uploadModel(file) {
+  const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
+  const uploaded = await cloudinary.uploader.upload(dataUri, {
+    folder: 'seedarrt/models',
+    resource_type: 'raw',
+  })
+  return { modelUrl: uploaded.secure_url, modelPublicId: uploaded.public_id }
 }
 
 // Public : liste des œuvres publiées, triée par `order`, avec filtre optionnel par catégorie.
@@ -45,25 +61,34 @@ router.get('/all', requireAuth, async (req, res, next) => {
 // Protégé : création. Accepte soit un fichier (upload Cloudinary), soit une image déjà
 // existante (imageUrl/imagePublicId) — ce second chemin sert à "Annuler" après une
 // suppression, sans avoir à ré-uploader le fichier perdu au moment du delete.
-router.post('/', requireAuth, upload.single('image'), async (req, res, next) => {
+router.post('/', requireAuth, uploadFields, async (req, res, next) => {
   try {
     const parsed = workSchema.safeParse(req.body)
     if (!parsed.success) {
       return res.status(400).json({ error: 'Données invalides' })
     }
 
+    const imageFile = req.files?.image?.[0]
     let image
-    if (req.file) {
-      image = await uploadImage(req.file)
+    if (imageFile) {
+      image = await uploadImage(imageFile)
     } else if (req.body.imageUrl) {
       image = { imageUrl: req.body.imageUrl, imagePublicId: req.body.imagePublicId || null }
     } else {
       return res.status(400).json({ error: 'Image requise' })
     }
 
+    const modelFile = req.files?.model?.[0]
+    let model = {}
+    if (modelFile) {
+      model = await uploadModel(modelFile)
+    } else if (req.body.modelUrl) {
+      model = { modelUrl: req.body.modelUrl, modelPublicId: req.body.modelPublicId || null }
+    }
+
     const order = await prisma.work.count()
     const work = await prisma.work.create({
-      data: { ...parsed.data, ...image, order },
+      data: { ...parsed.data, ...image, ...model, order },
     })
 
     res.status(201).json(work)
@@ -73,7 +98,7 @@ router.post('/', requireAuth, upload.single('image'), async (req, res, next) => 
 })
 
 // Protégé : édition partielle, avec remplacement d'image optionnel.
-router.patch('/:id', requireAuth, upload.single('image'), async (req, res, next) => {
+router.patch('/:id', requireAuth, uploadFields, async (req, res, next) => {
   try {
     const id = Number(req.params.id)
     const parsed = workUpdateSchema.safeParse(req.body)
@@ -81,11 +106,15 @@ router.patch('/:id', requireAuth, upload.single('image'), async (req, res, next)
       return res.status(400).json({ error: 'Données invalides' })
     }
 
-    const image = req.file ? await uploadImage(req.file) : {}
+    const imageFile = req.files?.image?.[0]
+    const image = imageFile ? await uploadImage(imageFile) : {}
+
+    const modelFile = req.files?.model?.[0]
+    const model = modelFile ? await uploadModel(modelFile) : {}
 
     const work = await prisma.work.update({
       where: { id },
-      data: { ...parsed.data, ...image },
+      data: { ...parsed.data, ...image, ...model },
     })
 
     res.json(work)

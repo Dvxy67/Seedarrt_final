@@ -23,6 +23,8 @@ model Work {
   published     Boolean  @default(true)
   imageUrl      String
   imagePublicId String?
+  modelUrl      String?
+  modelPublicId String?
   order         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

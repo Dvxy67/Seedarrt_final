@@ -32,7 +32,44 @@ const steps = [
     type: 'image',
     src: '/works/IMG_4681.PNG',
   },
+  {
+    index: '04',
+    name: 'Animation',
+    description: 'Mise en mouvement des volumes : lumière, matière et caméra deviennent des outils de récit.',
+    type: 'video',
+    src: '/video/animation.mp4',
+  },
 ]
+
+function VideoStep({ src }) {
+  const videoRef = useRef(null)
+  const [playing, setPlaying] = useState(false)
+
+  const handlePlay = () => {
+    videoRef.current?.play()
+  }
+
+  return (
+    <div className={styles.videoWrap}>
+      <video
+        ref={videoRef}
+        className={styles.video}
+        src={src}
+        controls={playing}
+        playsInline
+        preload="metadata"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+      />
+      {!playing && (
+        <button type="button" className={styles.playButton} aria-label="Lire la vidéo" onClick={handlePlay}>
+          <span className={styles.playIcon} />
+        </button>
+      )}
+    </div>
+  )
+}
 
 export default function Creation() {
   const [activeStep, setActiveStep] = useState(0)
@@ -199,24 +236,29 @@ export default function Creation() {
           style={isMobile ? { x: springX } : undefined}
         >
 
-          {steps.map((s, i) => (
-            <div
-              key={s.name}
-              className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''} ${s.type === 'scene' && !(isMobile && s.src) ? styles.mediaScene : ''}`}
-            >
-              {s.type === 'image' || (isMobile && s.src) ? (
-                <img src={s.src} alt={s.name} className={styles.image} loading="eager" />
-              ) : isMobile ? (
-                <div className={styles.scenePlaceholder}>
-                  <span>Aperçu 3D — bientôt disponible</span>
-                </div>
-              ) : (
-                <Suspense fallback={null}>
-                  <StepScene />
-                </Suspense>
-              )}
-            </div>
-          ))}
+          {steps.map((s, i) => {
+            const fullBleed = s.type === 'video' || (s.type === 'scene' && !(isMobile && s.src))
+            return (
+              <div
+                key={s.name}
+                className={`${styles.media} ${i === activeStep ? styles.mediaActive : ''} ${fullBleed ? styles.mediaScene : ''}`}
+              >
+                {s.type === 'video' ? (
+                  <VideoStep src={s.src} />
+                ) : s.type === 'image' || (isMobile && s.src) ? (
+                  <img src={s.src} alt={s.name} className={styles.image} loading="eager" />
+                ) : isMobile ? (
+                  <div className={styles.scenePlaceholder}>
+                    <span>Aperçu 3D — bientôt disponible</span>
+                  </div>
+                ) : (
+                  <Suspense fallback={null}>
+                    <StepScene />
+                  </Suspense>
+                )}
+              </div>
+            )
+          })}
 
           {isMobile && (
             <>

@@ -16,6 +16,9 @@ function buildWorkFormData(fields) {
   if (fields.imageFile) fd.append('image', fields.imageFile)
   if (fields.imageUrl) fd.append('imageUrl', fields.imageUrl)
   if (fields.imagePublicId) fd.append('imagePublicId', fields.imagePublicId)
+  if (fields.modelFile) fd.append('model', fields.modelFile)
+  if (fields.modelUrl) fd.append('modelUrl', fields.modelUrl)
+  if (fields.modelPublicId) fd.append('modelPublicId', fields.modelPublicId)
   return fd
 }
 
@@ -52,7 +55,7 @@ export default function Dashboard({ onLogout }) {
     setDrawerError('')
   }
 
-  const handleSaveDraft = async ({ id, title, category, year, description, published, imageFile }) => {
+  const handleSaveDraft = async ({ id, title, category, year, description, published, imageFile, modelFile, modelUrl, modelPublicId }) => {
     const cleanTitle = title.trim() || 'Sans titre'
     setDrawerError('')
     setDrawerSaving(true)
@@ -60,7 +63,7 @@ export default function Dashboard({ onLogout }) {
       if (id) {
         const updated = await api.patch(
           `/works/${id}`,
-          buildWorkFormData({ title: cleanTitle, category, year, description, published, imageFile }),
+          buildWorkFormData({ title: cleanTitle, category, year, description, published, imageFile, modelFile }),
           true
         )
         setWorks((prev) => prev.map((w) => (w.id === id ? updated : w)))
@@ -73,7 +76,7 @@ export default function Dashboard({ onLogout }) {
         }
         const created = await api.post(
           '/works',
-          buildWorkFormData({ title: cleanTitle, category, year, description, published, imageFile }),
+          buildWorkFormData({ title: cleanTitle, category, year, description, published, imageFile, modelFile, modelUrl, modelPublicId }),
           true
         )
         setWorks((prev) => [...prev, created])
@@ -115,6 +118,8 @@ export default function Dashboard({ onLogout }) {
           published: work.published,
           imageUrl: work.imageUrl,
           imagePublicId: work.imagePublicId,
+          modelUrl: work.modelUrl,
+          modelPublicId: work.modelPublicId,
         }),
         true
       )

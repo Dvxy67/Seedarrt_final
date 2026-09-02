@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, Suspense, lazy } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { Flip } from 'gsap/Flip'
@@ -6,6 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './Portfolio.module.css'
 import RevealText from '../ui/RevealText'
 import { useIsMobile } from '../../hooks/useIsMobile'
+
+const ModelViewer = lazy(() => import('../three/ModelViewer'))
 
 gsap.registerPlugin(Flip, ScrollTrigger)
 
@@ -122,7 +124,15 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         onClick={(e) => e.stopPropagation()}
       >
-        <img ref={imgRef} data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.lightboxImg} />
+        {work.modelUrl ? (
+          <div ref={imgRef} data-flip-id={`work-${work.id}`} className={styles.lightbox3d}>
+            <Suspense fallback={null}>
+              <ModelViewer src={work.modelUrl} />
+            </Suspense>
+          </div>
+        ) : (
+          <img ref={imgRef} data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.lightboxImg} />
+        )}
         <div className={styles.lightboxInfo}>
           <span className={styles.lightboxTitle}>{work.title}</span>
           <span className={styles.lightboxMeta}>{work.category} · {work.year}</span>
@@ -142,6 +152,7 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
 
 function WorkCard({ work, index, onClick, eagerFirst }) {
   const cardRef = useRef(null)
+  const [modelInView, setModelInView] = useState(false)
 
   useEffect(() => {
     const el = cardRef.current
@@ -161,6 +172,26 @@ function WorkCard({ work, index, onClick, eagerFirst }) {
     return () => ro.disconnect()
   }, [])
 
+  // Un visualiseur 3D (contexte WebGL + parsing du .glb) coûte bien plus cher
+  // qu'une image à créer : on ne le monte qu'une fois la carte proche du
+  // viewport, jamais au chargement initial de toute la grille.
+  useEffect(() => {
+    if (!work.modelUrl || modelInView) return
+    const el = cardRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setModelInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '300px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [work.modelUrl, modelInView])
+
   return (
     <motion.article
       ref={cardRef}
@@ -173,7 +204,17 @@ function WorkCard({ work, index, onClick, eagerFirst }) {
       onClick={() => onClick(work)}
     >
       <div className={styles.thumb}>
-        {work.src ? (
+        {work.modelUrl ? (
+          modelInView ? (
+            <div data-flip-id={`work-${work.id}`} className={styles.thumb3d}>
+              <Suspense fallback={<div className={styles.placeholder} />}>
+                <ModelViewer src={work.modelUrl} interactive={false} />
+              </Suspense>
+            </div>
+          ) : (
+            <div data-flip-id={`work-${work.id}`} className={styles.placeholder} />
+          )
+        ) : work.src ? (
           <img
             data-flip-id={`work-${work.id}`}
             src={work.src}
@@ -217,7 +258,7 @@ export default function Portfolio() {
       })
       .then(data => {
         if (cancelled) return
-        setWorks(data.map(w => ({ id: w.id, title: w.title, category: w.category, year: w.year, src: w.imageUrl })))
+        setWorks(data.map(w => ({ id: w.id, title: w.title, category: w.category, year: w.year, src: w.imageUrl, modelUrl: w.modelUrl })))
         setLoaded(true)
         scheduleScrollTriggerRefresh()
       })

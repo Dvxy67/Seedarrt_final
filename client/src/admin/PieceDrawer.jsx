@@ -14,6 +14,9 @@ export default function PieceDrawer({ mode, work, onSave, onClose, saving, error
   const [preview, setPreview] = useState(work?.imageUrl || null)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef(null)
+  const [modelFile, setModelFile] = useState(null)
+  const [modelName, setModelName] = useState(work?.modelUrl ? work.modelUrl.split('/').pop() : null)
+  const modelInputRef = useRef(null)
 
   useEffect(() => {
     if (!imageFile) return
@@ -26,6 +29,13 @@ export default function PieceDrawer({ mode, work, onSave, onClose, saving, error
     if (file && file.type.startsWith('image/')) setImageFile(file)
   }
 
+  const pickModelFile = (file) => {
+    if (file && file.name.toLowerCase().endsWith('.glb')) {
+      setModelFile(file)
+      setModelName(file.name)
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSave({
@@ -36,6 +46,9 @@ export default function PieceDrawer({ mode, work, onSave, onClose, saving, error
       description,
       published,
       imageFile,
+      modelFile,
+      modelUrl: work?.modelUrl,
+      modelPublicId: work?.modelPublicId,
     })
   }
 
@@ -88,6 +101,32 @@ export default function PieceDrawer({ mode, work, onSave, onClose, saving, error
               />
             </div>
           </div>
+
+          {category === '3D' && (
+            <div>
+              <div className={styles.label}>Modèle 3D (.glb)</div>
+              <div
+                className={styles.dropzone}
+                onClick={() => modelInputRef.current?.click()}
+              >
+                {modelName ? (
+                  <div className={styles.dropText}>{modelName}</div>
+                ) : (
+                  <>
+                    <div className={styles.dropText}>Déposer un fichier .glb, ou parcourir</div>
+                    <div className={styles.dropHint}>Optionnel · 15 Mo maximum · visualiseur interactif sur le site</div>
+                  </>
+                )}
+                <input
+                  ref={modelInputRef}
+                  type="file"
+                  accept=".glb"
+                  hidden
+                  onChange={(e) => pickModelFile(e.target.files?.[0])}
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <div className={styles.label}>Titre</div>

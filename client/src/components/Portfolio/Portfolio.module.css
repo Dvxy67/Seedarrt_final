@@ -201,6 +201,12 @@
   background: var(--color-surface);
 }
 
+.thumb3d {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--color-surface);
+}
+
 .grid.resizing .image,
 .grid.resizing .placeholder {
   transition: none;
@@ -209,6 +215,10 @@
 .thumb:hover .image,
 .thumb:hover .placeholder {
   transform: scale(1.05);
+}
+
+.thumb3d canvas {
+  display: block;
 }
 
 .caption {
@@ -297,7 +307,8 @@
   }
 
   .image,
-  .placeholder {
+  .placeholder,
+  .thumb3d {
     width: 100%;
     height: 100%;
     aspect-ratio: 4 / 5;
@@ -343,6 +354,15 @@
   max-height: 82vh;
   object-fit: contain;
   display: block;
+}
+
+.lightbox3d {
+  width: 100%;
+  height: min(70vh, 640px);
+  max-height: 82vh;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  touch-action: none;
 }
 
 .lightboxInfo {
