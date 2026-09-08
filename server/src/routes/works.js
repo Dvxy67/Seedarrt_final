@@ -20,7 +20,16 @@ const uploadFields = upload.fields([
 async function uploadImage(file) {
   const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
   const uploaded = await cloudinary.uploader.upload(dataUri, { folder: 'seedarrt' })
-  return { imageUrl: uploaded.secure_url, imagePublicId: uploaded.public_id }
+  // secure_url livre l'image brute telle qu'uploadée ; on reconstruit l'URL avec
+  // f_auto/q_auto pour que Cloudinary choisisse format et qualité à la volée
+  // selon chaque visiteur (WebP/AVIF si possible, qualité ajustée), sans avoir
+  // à optimiser les fichiers à la main avant de les envoyer.
+  const imageUrl = cloudinary.url(uploaded.public_id, {
+    secure: true,
+    quality: 'auto',
+    fetch_format: 'auto',
+  })
+  return { imageUrl, imagePublicId: uploaded.public_id }
 }
 
 // Les .glb ne sont ni une image ni une vidéo pour Cloudinary : resource_type

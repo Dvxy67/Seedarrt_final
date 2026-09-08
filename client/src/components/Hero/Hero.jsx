@@ -43,13 +43,14 @@ export default function Hero() {
         {isMobile ? (
           <div className={styles.mobileHead}>
             <span className={styles.tagline}>Artiste pluridisciplinaire</span>
-            <h1 className={styles.mobileTitle}>Seedarrt</h1>
+            <div className={styles.mobileImageWrap}>
+              <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.mobileImage} />
+            </div>
+            <h1 className={styles.visuallyHidden}>Seedarrt</h1>
             <p className={styles.mobileSubtitle}>peinture, 3D, graphisme</p>
-            <div className={styles.mobileDivider} />
             <p className={styles.mobileText}>
               Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.
             </p>
-            <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.mobileImage} />
           </div>
         ) : (
           <>
@@ -95,6 +96,12 @@ export default function Hero() {
         >
           Découvrir le travail
         </motion.a>
+
+        {isMobile && (
+          <a href="#contact" className={styles.contactLink}>
+            Me contacter
+          </a>
+        )}
       </div>
 
 

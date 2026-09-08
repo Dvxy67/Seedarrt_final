@@ -150,27 +150,47 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
   )
 }
 
-function WorkCard({ work, index, onClick, eagerFirst }) {
+function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
   const cardRef = useRef(null)
   const [modelInView, setModelInView] = useState(false)
+  const isAnimatingRef = useRef(isAnimating)
+  const updateSpanRef = useRef(() => {})
 
   useEffect(() => {
     const el = cardRef.current
     const grid = el?.parentElement
     if (!el || !grid) return
 
-    const updateSpan = () => {
+    const updateSpan = (source = 'resize-observer') => {
+      // Ne jamais toucher --row-span pendant une transition Flip en cours :
+      // les deux systèmes bougeraient la carte en même temps et se marchent
+      // dessus (ex. une image qui finit de charger pile pendant l'animation).
+      if (isAnimatingRef.current) {
+        window.__pfDebug?.push({ t: Date.now(), work: work.id, source, skipped: true })
+        return
+      }
       const rowGap = parseFloat(getComputedStyle(grid).rowGap) || 0
       const rowHeight = parseFloat(getComputedStyle(grid).gridAutoRows) || 1
-      const span = Math.ceil((el.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap))
+      const rect = el.getBoundingClientRect()
+      const span = Math.ceil((rect.height + rowGap) / (rowHeight + rowGap))
       el.style.setProperty('--row-span', String(span))
+      window.__pfDebug?.push({ t: Date.now(), work: work.id, source, height: rect.height, span })
       scheduleScrollTriggerRefresh()
     }
+    updateSpanRef.current = updateSpan
 
     const ro = new ResizeObserver(updateSpan)
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
+
+  // Rattrape, juste après la fin de la transition, une mise à jour de taille
+  // qui aurait été ignorée parce qu'une image a fini de charger pendant celle-ci.
+  useEffect(() => {
+    const wasAnimating = isAnimatingRef.current
+    isAnimatingRef.current = isAnimating
+    if (wasAnimating && !isAnimating) updateSpanRef.current('catch-up')
+  }, [isAnimating])
 
   // Un visualiseur 3D (contexte WebGL + parsing du .glb) coûte bien plus cher
   // qu'une image à créer : on ne le monte qu'une fois la carte proche du
@@ -233,6 +253,10 @@ function WorkCard({ work, index, onClick, eagerFirst }) {
     </motion.article>
   )
 }
+
+// Debug temporaire pour diagnostiquer le bug de chevauchement des cartes —
+// à retirer une fois la cause trouvée. Dans la console : window.__pfDebug
+if (typeof window !== 'undefined' && !window.__pfDebug) window.__pfDebug = []
 
 export default function Portfolio() {
   const [works, setWorks] = useState([])
@@ -305,7 +329,10 @@ export default function Portfolio() {
     if (survivorIds.length && gridRef.current) {
       const selector = survivorIds.map(id => `[data-flip-id="${id}"]`).join(',')
       const cards = gridRef.current.querySelectorAll(selector)
-      if (cards.length) flipStateRef.current = Flip.getState(cards)
+      if (cards.length) {
+        flipStateRef.current = Flip.getState(cards)
+        setIsAnimating(true)
+      }
     }
 
     setActive(cat)
@@ -317,40 +344,71 @@ export default function Portfolio() {
     if (gridRef.current) {
       const selector = filtered.map(w => `[data-flip-id="${w.id}"]`).join(',')
       const cards = gridRef.current.querySelectorAll(selector)
-      if (cards.length) flipStateRef.current = Flip.getState(cards)
+      if (cards.length) {
+        flipStateRef.current = Flip.getState(cards)
+        setIsAnimating(true)
+      }
     }
 
     setDensity(mode)
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false
       return
     }
     if (!flipStateRef.current) return
 
-    // Recalcule les row-span avant de mesurer l'état final : la largeur des
-    // colonnes a pu changer (densité), donc la hauteur des cartes aussi,
-    // avant que le ResizeObserver de chaque carte n'ait eu l'occasion de réagir.
-    if (gridRef.current) {
+    let cancelled = false
+
+    const runFlip = () => {
+      if (cancelled || !gridRef.current) return
+
+      // Recalcule les row-span avant de mesurer l'état final : la largeur des
+      // colonnes a pu changer (densité), donc la hauteur des cartes aussi,
+      // avant que le ResizeObserver de chaque carte n'ait eu l'occasion de réagir.
       const rowGap = parseFloat(getComputedStyle(gridRef.current).rowGap) || 0
       const rowHeight = parseFloat(getComputedStyle(gridRef.current).gridAutoRows) || 1
       gridRef.current.querySelectorAll(`.${styles.card}`).forEach(card => {
-        const span = Math.ceil((card.getBoundingClientRect().height + rowGap) / (rowHeight + rowGap))
+        const rect = card.getBoundingClientRect()
+        const span = Math.ceil((rect.height + rowGap) / (rowHeight + rowGap))
         card.style.setProperty('--row-span', String(span))
+        window.__pfDebug?.push({ t: Date.now(), work: card.dataset.flipId, source: 'bulk-recalc', height: rect.height, span })
       })
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      window.__pfDebug?.push({ t: Date.now(), source: 'flip-start' })
+      Flip.from(flipStateRef.current, {
+        duration: reduceMotion ? 0 : 0.8,
+        ease: 'expo.inOut',
+        onComplete: () => {
+          window.__pfDebug?.push({ t: Date.now(), source: 'flip-complete' })
+          setIsAnimating(false)
+        },
+      })
+      flipStateRef.current = null
     }
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Les images Cloudinary chargent depuis le réseau (contrairement aux
+    // anciennes images locales, quasi instantanées) : mesurer la hauteur des
+    // cartes avant qu'elles aient fini de charger fausse --row-span et fait
+    // sauter la grille après coup. On attend qu'elles soient prêtes, avec un
+    // filet de sécurité pour ne jamais bloquer l'affichage trop longtemps.
+    const pendingImages = gridRef.current
+      ? Array.from(gridRef.current.querySelectorAll('img')).filter(img => !img.complete)
+      : []
 
-    setIsAnimating(true)
-    Flip.from(flipStateRef.current, {
-      duration: reduceMotion ? 0 : 0.8,
-      ease: 'expo.inOut',
-      onComplete: () => setIsAnimating(false),
-    })
-    flipStateRef.current = null
+    if (pendingImages.length === 0) {
+      runFlip()
+    } else {
+      const ready = Promise.all(pendingImages.map(img => img.decode().catch(() => {})))
+      const timeout = new Promise(resolve => setTimeout(resolve, 600))
+      Promise.race([ready, timeout]).then(runFlip)
+    }
+
+    return () => { cancelled = true }
   }, [active, density])
 
   const handleOpen = (work) => {
@@ -443,7 +501,7 @@ export default function Portfolio() {
             >
               <AnimatePresence mode="popLayout">
                 {filtered.map((work, i) => (
-                  <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} eagerFirst={isMobile} />
+                  <WorkCard key={work.id} work={work} index={i} onClick={handleOpen} eagerFirst={isMobile} isAnimating={isAnimating} />
                 ))}
               </AnimatePresence>
             </div>
