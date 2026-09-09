@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar from './components/Navbar/Navbar'
 import Hero from './components/Hero/Hero'
@@ -19,7 +18,19 @@ export default function App() {
   useEffect(() => {
     const t1 = setTimeout(() => ScrollTrigger.refresh(), 300)
     const t2 = setTimeout(() => ScrollTrigger.refresh(), 1200)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+
+    // Les images (portrait, œuvres…) peuvent finir de charger après ces délais
+    // sur mobile — leur poids décale la hauteur de page et désynchronise les
+    // positions de scroll déjà calculées par GSAP. On recalcule une dernière
+    // fois une fois que tout (y compris les images) est réellement chargé.
+    const onLoad = () => ScrollTrigger.refresh()
+    window.addEventListener('load', onLoad)
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      window.removeEventListener('load', onLoad)
+    }
   }, [])
 
   const [introDone, setIntroDone] = useState(

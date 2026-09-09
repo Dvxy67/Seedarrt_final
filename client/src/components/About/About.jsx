@@ -59,8 +59,23 @@ export default function About() {
       },
     })
 
+    // Filet de sécurité indépendant de GSAP : si un flick rapide (mobile) fait
+    // sauter le scroll par-dessus le seuil exact où onLeave/onLeaveBack se
+    // déclenchent, le fond peut rester bloqué clair. On détecte ici, via
+    // IntersectionObserver (donc sans dépendre des positions en pixels que
+    // GSAP a pu calculer), le moment où la section quitte complètement l'écran
+    // et on force le retour au fond sombre.
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) {
+        gsap.set('body', { backgroundColor: '#0f0b08', color: '#f2ede6' })
+        gsap.set(wrapper, { '--color-text-muted': '#9a8f85' })
+      }
+    })
+    io.observe(wrapper)
+
     return () => {
       trigger.kill()
+      io.disconnect()
       gsap.set('body', { clearProps: 'backgroundColor,color' })
       gsap.set(wrapper, { clearProps: '--color-text-muted' })
     }

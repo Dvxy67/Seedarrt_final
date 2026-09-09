@@ -25,6 +25,8 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-bg);
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -36,6 +38,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+  min-height: 100%;
 }
 
 ::selection {
