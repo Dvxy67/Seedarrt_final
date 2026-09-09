@@ -2,6 +2,7 @@ import { useRef, lazy, Suspense } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import styles from './Hero.module.css'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { HERO_LOGO_URL } from '../../lib/siteAssets'
 
 const ArtScene = lazy(() => import('../three/ArtScene'))
 
@@ -44,7 +45,7 @@ export default function Hero() {
           <div className={styles.mobileHead}>
             <span className={styles.tagline}>Artiste pluridisciplinaire</span>
             <div className={styles.mobileImageWrap}>
-              <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.mobileImage} />
+              <img src={HERO_LOGO_URL} alt="Seedarrt" className={styles.mobileImage} />
             </div>
             <h1 className={styles.visuallyHidden}>Seedarrt</h1>
             <p className={styles.mobileSubtitle}>peinture, 3D, graphisme</p>
@@ -71,7 +72,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <img src="/works/IMG_5062.PNG" alt="Seedarrt" className={styles.logo} />
+              <img src={HERO_LOGO_URL} alt="Seedarrt" className={styles.logo} />
             </motion.div>
 
             <motion.p

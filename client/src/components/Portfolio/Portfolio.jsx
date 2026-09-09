@@ -131,7 +131,7 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
             </Suspense>
           </div>
         ) : (
-          <img ref={imgRef} data-flip-id={`work-${work.id}`} src={work.src} alt={work.title} className={styles.lightboxImg} />
+          <img ref={imgRef} data-flip-id={`work-${work.id}`} src={work.srcFull} alt={work.title} className={styles.lightboxImg} decoding="async" />
         )}
         <div className={styles.lightboxInfo}>
           <span className={styles.lightboxTitle}>{work.title}</span>
@@ -152,7 +152,6 @@ function Lightbox({ work, works, onClose, gridRef, heroState, onSelect }) {
 
 function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
   const cardRef = useRef(null)
-  const [modelInView, setModelInView] = useState(false)
   const isAnimatingRef = useRef(isAnimating)
   const updateSpanRef = useRef(() => {})
 
@@ -192,26 +191,6 @@ function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
     if (wasAnimating && !isAnimating) updateSpanRef.current('catch-up')
   }, [isAnimating])
 
-  // Un visualiseur 3D (contexte WebGL + parsing du .glb) coûte bien plus cher
-  // qu'une image à créer : on ne le monte qu'une fois la carte proche du
-  // viewport, jamais au chargement initial de toute la grille.
-  useEffect(() => {
-    if (!work.modelUrl || modelInView) return
-    const el = cardRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setModelInView(true)
-          io.disconnect()
-        }
-      },
-      { rootMargin: '300px' }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [work.modelUrl, modelInView])
-
   return (
     <motion.article
       ref={cardRef}
@@ -224,23 +203,14 @@ function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
       onClick={() => onClick(work)}
     >
       <div className={styles.thumb}>
-        {work.modelUrl ? (
-          modelInView ? (
-            <div data-flip-id={`work-${work.id}`} className={styles.thumb3d}>
-              <Suspense fallback={<div className={styles.placeholder} />}>
-                <ModelViewer src={work.modelUrl} interactive={false} />
-              </Suspense>
-            </div>
-          ) : (
-            <div data-flip-id={`work-${work.id}`} className={styles.placeholder} />
-          )
-        ) : work.src ? (
+        {work.src ? (
           <img
             data-flip-id={`work-${work.id}`}
             src={work.src}
             alt={work.title}
             className={styles.image}
             loading={eagerFirst && index === 0 ? 'eager' : 'lazy'}
+            decoding="async"
           />
         ) : (
           <div data-flip-id={`work-${work.id}`} className={styles.placeholder} />
@@ -282,7 +252,7 @@ export default function Portfolio() {
       })
       .then(data => {
         if (cancelled) return
-        setWorks(data.map(w => ({ id: w.id, title: w.title, category: w.category, year: w.year, src: w.imageUrl, modelUrl: w.modelUrl })))
+        setWorks(data.map(w => ({ id: w.id, title: w.title, category: w.category, year: w.year, src: w.imageUrl, srcFull: w.imageUrlFull || w.imageUrl, modelUrl: w.modelUrl })))
         setLoaded(true)
         scheduleScrollTriggerRefresh()
       })

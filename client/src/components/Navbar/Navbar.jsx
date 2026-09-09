@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import styles from './Navbar.module.css'
+import { NAVBAR_LOGO_URL } from '../../lib/siteAssets'
 
 const links = [
   { label: 'Portfolio', href: '#portfolio' },
@@ -39,7 +40,7 @@ export default function Navbar() {
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
       <a href="#" className={styles.logo} onClick={() => setMenuOpen(false)} aria-label="Seedarrt — accueil">
         <span className={styles.logoImgWrap}>
-          <img src="/works/IMG_navbar.png" alt="Seedarrt" className={styles.logoImg} />
+          <img src={NAVBAR_LOGO_URL} alt="Seedarrt" className={styles.logoImg} />
         </span>
       </a>
 

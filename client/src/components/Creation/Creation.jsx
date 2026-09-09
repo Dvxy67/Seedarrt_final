@@ -5,6 +5,12 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { motion, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion'
 import styles from './Creation.module.css'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import {
+  CREATION_VIDEO_URL,
+  CREATION_STEP_3D_IMAGE_URL,
+  CREATION_STEP_PEINTURE_IMAGE_URL,
+  INTRO_IMAGE_URL,
+} from '../../lib/siteAssets'
 
 const StepScene = lazy(() => import('./StepScene'))
 
@@ -16,28 +22,28 @@ const steps = [
     name: 'Objet 3D',
     description: 'Sculpture numérique et modélisation. Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.',
     type: 'scene',
-    src: '/works/1_I came across the rainforest_oil painting_2025_75x60cm 2.JPG',
+    src: CREATION_STEP_3D_IMAGE_URL,
   },
   {
     index: '02',
     name: 'Peinture',
     description: "Exploration de la matière et de la couleur à travers l'huile sur toile. Des œuvres organiques inspirées par la nature et ses cycles.",
     type: 'image',
-    src: '/works/11_Death of the giants creatures, their death, creator of a new life_oil paintings_2025_150x100cm 2.JPG',
+    src: CREATION_STEP_PEINTURE_IMAGE_URL,
   },
   {
     index: '03',
     name: 'Graphisme',
     description: 'Direction artistique et identité visuelle. Un regard singulier mis au service de projets visuels et de communication.',
     type: 'image',
-    src: '/works/IMG_4681.PNG',
+    src: INTRO_IMAGE_URL,
   },
   {
     index: '04',
     name: 'Animation',
     description: 'Mise en mouvement des volumes : lumière, matière et caméra deviennent des outils de récit.',
     type: 'video',
-    src: '/video/animation.mp4',
+    src: CREATION_VIDEO_URL,
   },
 ]
 

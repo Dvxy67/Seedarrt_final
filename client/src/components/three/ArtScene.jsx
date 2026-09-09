@@ -3,10 +3,11 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, useGLTF, useAnimations, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
+import { HERO_MODEL_URL } from '../../lib/siteAssets'
 
 function Sculpture() {
   const groupRef = useRef()
-  const { scene, animations } = useGLTF('/models/Project%205.glb')
+  const { scene, animations } = useGLTF(HERO_MODEL_URL)
   const { actions } = useAnimations(animations, groupRef)
   const mouse = useRef({ x: 0, y: 0 })
   const rot = useRef({ x: 0, y: 0 })
@@ -49,7 +50,7 @@ function Sculpture() {
   )
 }
 
-useGLTF.preload('/models/Project%205.glb')
+useGLTF.preload(HERO_MODEL_URL)
 
 export default function ArtScene() {
   return (

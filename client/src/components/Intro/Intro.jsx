@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import styles from './Intro.module.css'
+import { INTRO_IMAGE_URL } from '../../lib/siteAssets'
 
 const TOTAL_MS = 5000
 const FADE_IN_MS = 800
@@ -31,7 +32,7 @@ export default function Intro({ onDone }) {
       }
     >
       <motion.img
-        src="/works/IMG_4681.PNG"
+        src={INTRO_IMAGE_URL}
         alt="Seedarrt"
         className={styles.logo}
         initial={{ opacity: 0 }}

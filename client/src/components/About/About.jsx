@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './About.module.css'
 import RevealText from '../ui/RevealText'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { ABOUT_IMAGE_URL } from '../../lib/siteAssets'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -92,7 +93,7 @@ export default function About() {
             >
               {/* Peinture en attendant un vrai portrait de l'artiste */}
               <img
-                src="/works/5_directly in the cave_oil painting_2024_100x75cm 2.JPG"
+                src={ABOUT_IMAGE_URL}
                 alt=""
                 className={styles.photo}
               />

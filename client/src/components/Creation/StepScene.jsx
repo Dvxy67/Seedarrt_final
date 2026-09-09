@@ -4,9 +4,10 @@ import { useGLTF, Environment, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { SkeletonUtils } from 'three-stdlib'
 import * as THREE from 'three'
+import { HERO_MODEL_URL } from '../../lib/siteAssets'
 
 function StepModel() {
-  const { scene: source } = useGLTF('/models/Project%205.glb')
+  const { scene: source } = useGLTF(HERO_MODEL_URL)
   const scene = useMemo(() => SkeletonUtils.clone(source), [source])
   const groupRef = useRef()
   const mouse = useRef({ x: 0, y: 0 })

@@ -101,7 +101,7 @@
 
 @media (max-width: 767px) {
   .hero {
-    height: 100dvh;
+    height: 100svh;
     align-items: stretch;
     padding-top: 6.5rem;
     padding-bottom: 2.5rem;

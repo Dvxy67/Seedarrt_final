@@ -28,7 +28,7 @@
 
 .logoImgWrap {
   display: block;
-  height: 1.7rem;
+  height: 2.6rem;
   aspect-ratio: 3.2 / 1;
   overflow: hidden;
 }
@@ -72,6 +72,10 @@
 
   .links {
     display: none;
+  }
+
+  .logoImgWrap {
+    height: 2.08rem;
   }
 
   .nav.scrolled {

@@ -17,19 +17,29 @@ const uploadFields = upload.fields([
   { name: 'model', maxCount: 1 },
 ])
 
+// Largeurs de livraison : vignette de grille (portfolio + admin) vs aperçu
+// grand format (lightbox). L'asset original reste stocké intact sur Cloudinary
+// sous imagePublicId — ces plafonds ne s'appliquent qu'à l'URL de livraison.
+const THUMB_WIDTH = 1000
+const FULL_WIDTH = 1600
+
 async function uploadImage(file) {
   const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
   const uploaded = await cloudinary.uploader.upload(dataUri, { folder: 'seedarrt' })
-  // secure_url livre l'image brute telle qu'uploadée ; on reconstruit l'URL avec
-  // f_auto/q_auto pour que Cloudinary choisisse format et qualité à la volée
-  // selon chaque visiteur (WebP/AVIF si possible, qualité ajustée), sans avoir
-  // à optimiser les fichiers à la main avant de les envoyer.
-  const imageUrl = cloudinary.url(uploaded.public_id, {
-    secure: true,
-    quality: 'auto',
-    fetch_format: 'auto',
-  })
+  const imageUrl = cloudinary.buildDeliveryUrl(uploaded.public_id, THUMB_WIDTH)
   return { imageUrl, imagePublicId: uploaded.public_id }
+}
+
+// Recalcule les URLs de livraison depuis imagePublicId plutôt que de renvoyer
+// imageUrl tel que stocké en base : ça plafonne aussi la taille des œuvres déjà
+// existantes sans avoir à les ré-uploader.
+function withDeliveryUrls(work) {
+  if (!work.imagePublicId) return { ...work, imageUrlFull: work.imageUrl }
+  return {
+    ...work,
+    imageUrl: cloudinary.buildDeliveryUrl(work.imagePublicId, THUMB_WIDTH),
+    imageUrlFull: cloudinary.buildDeliveryUrl(work.imagePublicId, FULL_WIDTH),
+  }
 }
 
 // Les .glb ne sont ni une image ni une vidéo pour Cloudinary : resource_type
@@ -51,7 +61,7 @@ router.get('/', async (req, res, next) => {
       where: { published: true, ...(category ? { category } : {}) },
       orderBy: { order: 'asc' },
     })
-    res.json(works)
+    res.json(works.map(withDeliveryUrls))
   } catch (err) {
     next(err)
   }
@@ -61,7 +71,7 @@ router.get('/', async (req, res, next) => {
 router.get('/all', requireAuth, async (req, res, next) => {
   try {
     const works = await prisma.work.findMany({ orderBy: { order: 'asc' } })
-    res.json(works)
+    res.json(works.map(withDeliveryUrls))
   } catch (err) {
     next(err)
   }
