@@ -8,12 +8,11 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Sur mobile, un flick de scroll couvre la distance de la transition bien plus
-// vite qu'un scroll bureau : le blanc n'est jamais "tenu", il est atteint pile
-// au moment de quitter la section puis repart aussitôt. On sature la courbe
-// plus tôt (à 55% du scroll) pour que le blanc reste stable jusqu'à la sortie,
-// sans changer la longueur du scroll elle-même.
-const MOBILE_HOLD_AT = 0.55
+// Desktop : le fond clair doit apparaître tôt dans le scroll de la section et
+// rester stable jusqu'à la sortie plutôt que d'arriver pile à la fin. On
+// sature la courbe de transition à 30% du scroll : le blanc est atteint dès
+// ce point, puis tenu jusqu'à la sortie, sans changer la longueur du scroll.
+const DESKTOP_HOLD_AT = 0.3
 
 export default function About() {
   const wrapperRef = useRef(null)
@@ -22,54 +21,51 @@ export default function About() {
   useEffect(() => {
     const wrapper = wrapperRef.current
     if (!wrapper) return
+    // Sur mobile, la section garde le fond sombre par défaut : pas de
+    // transition de couleur au scroll.
+    if (isMobile) return
 
-    const bgInterp    = gsap.utils.interpolate('#0f0b08', '#f2ede6')
-    const textInterp  = gsap.utils.interpolate('#f2ede6', '#0f0b08')
+    const bgInterp    = gsap.utils.interpolate('#171210', '#ede6de')
+    const textInterp  = gsap.utils.interpolate('#ede6de', '#171210')
     // Le texte "atténué" (--color-text-muted) doit lui aussi passer du clair
     // (lisible sur fond sombre) au foncé (lisible sur fond clair) — sans ça,
     // il reste gris clair sur fond clair en fin de scroll (contraste ~2,7:1).
-    const mutedInterp = gsap.utils.interpolate('#9a8f85', '#4a4038')
+    const mutedInterp = gsap.utils.interpolate('#a2958a', '#52463d')
+
+    const applyColors = (t) => {
+      gsap.set('body', {
+        backgroundColor: bgInterp(t),
+        color: textInterp(t),
+      })
+      gsap.set(wrapper, { '--color-text-muted': mutedInterp(t) })
+    }
+
+    const resetColors = (duration) => {
+      gsap.to('body', {
+        backgroundColor: '#171210', color: '#ede6de',
+        duration, ease: 'power2.inOut',
+      })
+      gsap.to(wrapper, { '--color-text-muted': '#a2958a', duration, ease: 'power2.inOut' })
+    }
 
     const trigger = ScrollTrigger.create({
       trigger: wrapper,
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onUpdate: (self) => {
-        const t = isMobile ? Math.min(1, self.progress / MOBILE_HOLD_AT) : self.progress
-        gsap.set('body', {
-          backgroundColor: bgInterp(t),
-          color: textInterp(t),
-        })
-        gsap.set(wrapper, { '--color-text-muted': mutedInterp(t) })
-      },
-      onLeave: () => {
-        gsap.to('body', {
-          backgroundColor: '#0f0b08', color: '#f2ede6',
-          duration: 0.8, ease: 'power2.inOut',
-        })
-        gsap.to(wrapper, { '--color-text-muted': '#9a8f85', duration: 0.8, ease: 'power2.inOut' })
-      },
-      onLeaveBack: () => {
-        gsap.to('body', {
-          backgroundColor: '#0f0b08', color: '#f2ede6',
-          duration: 0.5, ease: 'power2.inOut',
-        })
-        gsap.to(wrapper, { '--color-text-muted': '#9a8f85', duration: 0.5, ease: 'power2.inOut' })
-      },
+      onUpdate: (self) => applyColors(Math.min(1, self.progress / DESKTOP_HOLD_AT)),
+      onLeave: () => resetColors(0.8),
+      onLeaveBack: () => resetColors(0.5),
     })
 
-    // Filet de sécurité indépendant de GSAP : si un flick rapide (mobile) fait
-    // sauter le scroll par-dessus le seuil exact où onLeave/onLeaveBack se
-    // déclenchent, le fond peut rester bloqué clair. On détecte ici, via
-    // IntersectionObserver (donc sans dépendre des positions en pixels que
-    // GSAP a pu calculer), le moment où la section quitte complètement l'écran
-    // et on force le retour au fond sombre.
+    // Filet de sécurité indépendant de GSAP : si un scroll rapide fait sauter
+    // le seuil exact où onLeave/onLeaveBack se déclenchent, le fond peut
+    // rester bloqué clair. On détecte ici, via IntersectionObserver (donc
+    // sans dépendre des positions en pixels que GSAP a pu calculer), le
+    // moment où la section quitte complètement l'écran et on force le
+    // retour au fond sombre.
     const io = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) {
-        gsap.set('body', { backgroundColor: '#0f0b08', color: '#f2ede6' })
-        gsap.set(wrapper, { '--color-text-muted': '#9a8f85' })
-      }
+      if (!entry.isIntersecting) resetColors(0)
     })
     io.observe(wrapper)
 

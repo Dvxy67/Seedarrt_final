@@ -52,7 +52,7 @@ export default function StepScene() {
     >
       <ambientLight intensity={0.3} />
       <directionalLight position={[6, 6, 4]} intensity={1.2} color="#f5f0ea" />
-      <pointLight position={[-6, -4, -4]} intensity={0.8} color="#c4623a" />
+      <pointLight position={[-6, -4, -4]} intensity={0.8} color="#00674f" />
       <Environment preset="night" />
       <StepModel />
       <EffectComposer>

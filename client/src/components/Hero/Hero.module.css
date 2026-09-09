@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   height: 18rem;
-  background: linear-gradient(to bottom, rgba(15, 11, 8, 0.72) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(23, 18, 16, 0.72) 0%, transparent 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -39,11 +39,11 @@
   font-size: 0.68rem;
   letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-accent-light);
   margin-bottom: -2rem;
   position: relative;
   z-index: 2;
-  text-shadow: 0 0 24px rgba(15, 11, 8, 1), 0 2px 8px rgba(15, 11, 8, 0.95);
+  text-shadow: 0 0 24px rgba(23, 18, 16, 1), 0 2px 8px rgba(23, 18, 16, 0.95);
 }
 
 .logoWrap {
@@ -61,13 +61,13 @@
 .subtitle {
   font-size: 0.75rem;
   letter-spacing: 0.28em;
-  color: var(--color-text);
+  color: var(--color-text-subtitle);
   text-transform: uppercase;
   margin-top: -2.5rem;
   margin-bottom: 3.5rem;
   position: relative;
   z-index: 2;
-  text-shadow: 0 0 24px rgba(15, 11, 8, 1), 0 2px 8px rgba(15, 11, 8, 0.95);
+  text-shadow: 0 0 24px rgba(23, 18, 16, 1), 0 2px 8px rgba(23, 18, 16, 0.95);
 }
 
 .cta {
@@ -79,7 +79,7 @@
   text-transform: uppercase;
   color: var(--color-text);
   text-decoration: none;
-  border-bottom: 1px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-accent-light);
   padding-bottom: 0.3rem;
   transition: gap 0.35s ease, color 0.3s ease;
 }
@@ -91,7 +91,7 @@
 }
 
 .cta:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-light-hover);
   gap: 1.6rem;
 }
 
@@ -184,7 +184,7 @@
     padding: 1rem 0;
     flex-shrink: 0;
     background: var(--color-accent);
-    color: var(--color-bg);
+    color: var(--color-text);
     border: none;
     font-weight: 500;
   }
@@ -194,7 +194,7 @@
   }
 
   .cta:hover {
-    color: var(--color-bg);
+    color: var(--color-text);
     gap: 0;
   }
 
@@ -206,7 +206,7 @@
     font-size: 0.68rem;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--color-text-link);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     padding-bottom: 0.2rem;
@@ -217,7 +217,7 @@
 
   .contactLink:hover {
     color: var(--color-text);
-    border-color: var(--color-accent);
+    border-color: var(--color-accent-light);
   }
 }
 

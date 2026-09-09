@@ -1,10 +1,25 @@
 :root {
-  --color-bg: #0f0b08;
-  --color-surface: #1a1410;
-  --color-text: #f2ede6;
-  --color-text-muted: #9a8f85;
-  --color-accent: #c4623a;
-  --color-border: rgba(196, 98, 58, 0.15);
+  --color-bg: #171210;
+  --color-bg-deep: #0e0b09;
+  --color-surface: #221b18;
+
+  --color-text: #ede6de;
+  --color-text-menu: #c6bbb1;
+  --color-text-subtitle: #b4a79c;
+  --color-text-muted: #a2958a;
+  --color-text-link: #8f8278;
+  --color-text-footer: #6e645c;
+
+  --color-accent: #00674f;
+  --color-accent-hover: #00815f;
+  --color-accent-active: #004f3b;
+  --color-accent-light: #12b98d;
+  --color-accent-light-hover: #3fc79b;
+
+  --color-border: rgba(0, 103, 79, 0.15);
+  --glow-accent: rgba(0, 103, 79, 0.22);
+  --glow-pink: rgba(226, 182, 214, 0.16);
+  --underline-soft: rgba(237, 230, 222, 0.16);
 
   --font-display: 'Cormorant Garamond', serif;
   --font-body: 'DM Sans', sans-serif;
@@ -44,7 +59,7 @@ body {
 
 ::selection {
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-text);
 }
 
 img,

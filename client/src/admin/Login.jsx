@@ -178,7 +178,7 @@ export default function Login({ onLogin }) {
                 <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
                   <path
                     d="M8 18.2 L14.4 24.2 L26 10.4"
-                    stroke="#c4623a"
+                    stroke="#00674f"
                     strokeWidth="1.6"
                     strokeLinecap="square"
                     strokeDasharray="34"
