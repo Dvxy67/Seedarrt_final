@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Newsletter.module.css'
 import RevealText from '../ui/RevealText'
 
@@ -78,8 +78,31 @@ export default function Newsletter() {
           transition={{ duration: 0.8, delay: 0.15 }}
         >
           <div className={styles.card}>
+            <AnimatePresence mode="wait">
             {status === 'success' ? (
-              <div className={styles.success} role="status" aria-live="polite">
+              <motion.div
+                key="success"
+                className={styles.success}
+                role="status"
+                aria-live="polite"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className={styles.successStamp}>
+                  <span className={styles.successRing} />
+                  <span className={styles.successRingStatic} />
+                  <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+                    <path
+                      d="M8 18.2 L14.4 24.2 L26 10.4"
+                      stroke="var(--color-accent-light)"
+                      strokeWidth="1.8"
+                      strokeLinecap="square"
+                      strokeDasharray="34"
+                      className={styles.successTick}
+                    />
+                  </svg>
+                </div>
                 <div className={styles.successHead}>
                   <span className={styles.successRule} />
                   <span className={styles.successTitle}>C'est noté.</span>
@@ -87,9 +110,15 @@ export default function Newsletter() {
                 <p className={styles.successBody}>
                   Un email de confirmation vient de partir. La prochaine lettre arrive bientôt.
                 </p>
-              </div>
+              </motion.div>
             ) : (
-              <form className={styles.form} onSubmit={handleSubmit} noValidate>
+              <motion.form
+                key="form"
+                className={styles.form}
+                onSubmit={handleSubmit}
+                noValidate
+                exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              >
                 <span className={styles.cardLabel}>Une seule information suffit</span>
 
                 <label htmlFor="newsletter-email" className={styles.visuallyHidden}>
@@ -128,8 +157,9 @@ export default function Newsletter() {
                     ? <p className={styles.errorNote}>{errorMsg}</p>
                     : <p className={styles.note}>Trois à quatre envois par an. Pas de spam, désinscription en un clic.</p>}
                 </div>
-              </form>
+              </motion.form>
             )}
+            </AnimatePresence>
           </div>
 
           <div className={styles.altContact}>

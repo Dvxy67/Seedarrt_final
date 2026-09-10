@@ -13,8 +13,21 @@ export const HERO_LOGO_URL =
 export const INTRO_IMAGE_URL =
   'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/yc0e0grze4e6hqmig20k'
 
+// Source : 1920x1080, ~3min14, ~2.1 Mbps, 52 Mo (vérifié via ffprobe) — chargée
+// à résolution native, contrairement aux images (toutes en c_limit,w_1600
+// ci-dessous). w_1280,q_auto:eco ramène à ~23 Mo. Couplé à preload="none" côté
+// <video> (VideoStep, Creation.jsx) : plus aucun octet de la vidéo n'est
+// demandé avant que l'utilisateur appuie sur lecture — c'est ça qui évitait le
+// jank constaté à l'entrée en vue de l'étape "Animation" sur mobile, le poids
+// du fichier ne joue qu'une fois la lecture lancée.
 export const CREATION_VIDEO_URL =
-  'https://res.cloudinary.com/dvtv7bku4/video/upload/f_auto,q_auto/v1/seedarrt/site/rha2km6ecl9gemwxhutd'
+  'https://res.cloudinary.com/dvtv7bku4/video/upload/f_auto,q_auto:eco,w_1280,c_limit/v1/seedarrt/site/rha2km6ecl9gemwxhutd'
+
+// Frame extraite de la vidéo (via l'extension .jpg côté Cloudinary), utilisée
+// comme poster : évite au navigateur de devoir décoder la vidéo elle-même
+// juste pour afficher un aperçu avant lecture.
+export const CREATION_VIDEO_POSTER_URL =
+  'https://res.cloudinary.com/dvtv7bku4/video/upload/f_auto,q_auto,w_1280,c_limit,so_0/v1/seedarrt/site/rha2km6ecl9gemwxhutd.jpg'
 
 export const HERO_MODEL_URL =
   'https://res.cloudinary.com/dvtv7bku4/raw/upload/v1/seedarrt/site/dlnhrejvf63ihlfnkhek.glb'

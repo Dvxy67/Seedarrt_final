@@ -241,19 +241,27 @@
 /* ── Mobile ── */
 @media (max-width: 960px) {
   .wrapper {
-    height: auto;
+    height: 320vh;
   }
 
   .section {
     grid-template-columns: 1fr;
-    height: auto;
-    min-height: 100vh;
+    align-content: start;
+    top: 5rem;
+    height: calc(100vh - 5rem);
+    height: calc(100svh - 5rem);
+  }
+
+  .progressTrack {
     position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    height: 3px;
   }
 
   .right {
-    height: 55vw;
-    min-height: 300px;
+    height: clamp(170px, 26vh, 320px);
     position: relative;
   }
 
@@ -271,66 +279,54 @@
 
 @media (max-width: 767px) {
   .section {
-    min-height: 0;
-    touch-action: pan-y;
+    top: 4.2rem;
+    height: calc(100vh - 4.2rem);
+    height: calc(100svh - 4.2rem);
   }
 
   .right {
     order: 1;
-    height: 62vw;
-    min-height: 240px;
+    height: clamp(150px, 24vh, 280px);
     border: 1px solid var(--color-border);
     box-sizing: border-box;
   }
 
   .dotsWrap {
     order: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-    padding-top: 1.2rem;
-  }
-
-  .dotsRow {
-    display: flex;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-
-  .swipeHint {
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
+    padding: 2.6rem var(--side-padding);
   }
 
   .left {
     order: 3;
-    padding: 1.6rem var(--side-padding) 2.5rem;
+    padding: 0 var(--side-padding) 1.4rem;
+    justify-content: flex-start;
   }
 
   .eyebrow {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.9rem;
   }
 
   .stepName {
-    font-size: clamp(2.625rem, 10vw, 3.5rem); /* 42–56px */
+    font-size: clamp(2.25rem, 9vw, 3rem); /* 36–48px */
   }
 
   .divider {
-    margin: 1.2rem 0;
+    margin: 0.9rem 0;
   }
 
   .description {
-    font-size: 1.0625rem; /* 17px */
-    line-height: 1.7;
+    font-size: 1rem; /* 16px */
+    line-height: 1.6;
     max-width: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .bottom {
-    margin-top: 1.6rem;
-    gap: 1.6rem;
+    margin-top: 1.1rem;
+    gap: 1.1rem;
   }
 
   .tabs {
@@ -395,57 +391,4 @@
     color: var(--color-text);
   }
 
-  .dot {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .dotVisual {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--color-border);
-    transition: background 0.25s ease, width 0.25s ease;
-  }
-
-  .dotActive .dotVisual {
-    width: 30px;
-    background: var(--color-accent);
-  }
-
-  .navArrow {
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-size: 1.7rem;
-    line-height: 1;
-    color: var(--color-text);
-    opacity: 0.8;
-    text-shadow: 0 1px 6px rgba(21, 17, 16, 0.9), 0 0 16px rgba(21, 17, 16, 0.7);
-  }
-
-  .navArrowLeft {
-    left: 0.2rem;
-  }
-
-  .navArrowRight {
-    right: 0.2rem;
-  }
 }

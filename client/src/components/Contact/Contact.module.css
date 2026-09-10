@@ -350,6 +350,51 @@
   padding: 3rem 0;
 }
 
+.sentStamp {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: contactStamp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.sentRing {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-accent-light);
+  border-radius: 50%;
+  animation: contactRing 1.5s ease-out 0.5s infinite;
+}
+
+.sentRingStatic {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 103, 79, 0.35);
+  border-radius: 50%;
+}
+
+.sentTick {
+  animation: contactTick 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+@keyframes contactStamp {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes contactTick {
+  from { stroke-dashoffset: 34; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes contactRing {
+  0% { opacity: 0.5; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
 .sentTag {
   font-size: 0.68rem;
   letter-spacing: 0.3em;
@@ -390,6 +435,14 @@
 .ghostBtn:hover {
   color: var(--color-text);
   border-color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sentStamp,
+  .sentRing,
+  .sentTick {
+    animation: none;
+  }
 }
 
 @media (max-width: 960px) {

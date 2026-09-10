@@ -77,5 +77,18 @@ button {
     --spacing-section: 6rem;
     --side-padding: 1.5rem;
   }
+
+  /* Masque l'indicateur de scroll natif (Chrome Android le rend plus visible
+     sur les pages longues, ex. la section Création pinnée) — le scroll
+     tactile reste inchangé, seul le rendu de la barre est retiré. */
+  html,
+  body {
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
 }
 

@@ -162,11 +162,25 @@ export default function Contact() {
                 <motion.div
                   key="sent"
                   className={styles.sentPanel}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
+                  <div className={styles.sentStamp}>
+                    <span className={styles.sentRing} />
+                    <span className={styles.sentRingStatic} />
+                    <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+                      <path
+                        d="M8 18.2 L14.4 24.2 L26 10.4"
+                        stroke="var(--color-accent-light)"
+                        strokeWidth="1.8"
+                        strokeLinecap="square"
+                        strokeDasharray="34"
+                        className={styles.sentTick}
+                      />
+                    </svg>
+                  </div>
                   <span className={styles.sentTag}>Message envoyé</span>
                   <p className={styles.sentTitle}>Merci {name}, c'est bien reçu.</p>
                   <p className={styles.sentText}>Je reviens vers vous à {email} sous 24 heures ouvrées.</p>
