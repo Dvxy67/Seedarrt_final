@@ -36,7 +36,12 @@ app.use(helmet({
       // des textures, et vers la texture d'environnement HDRI par défaut de
       // Drei (hébergée sur raw.githack.com). Ces erreurs non rattrapées
       // faisaient planter tout le rendu React (page entièrement noire).
-      connectSrc: ["'self'", 'blob:', 'https://res.cloudinary.com', 'https://raw.githack.com'],
+      connectSrc: [
+        "'self'", 'blob:', 'https://res.cloudinary.com',
+        // raw.githack.com (texture HDRI par défaut de Drei) redirige vers
+        // raw.githubusercontent.com — les deux doivent être autorisés.
+        'https://raw.githack.com', 'https://raw.githubusercontent.com',
+      ],
     },
   },
 }))
