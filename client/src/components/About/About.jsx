@@ -91,10 +91,9 @@ export default function About() {
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.95, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              {/* Peinture en attendant un vrai portrait de l'artiste */}
               <img
                 src={ABOUT_IMAGE_URL}
-                alt=""
+                alt="Chevalet en extérieur, au bord de l'eau"
                 className={styles.photo}
               />
               <div className={styles.frame} />

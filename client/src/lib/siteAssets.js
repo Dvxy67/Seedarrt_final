@@ -19,19 +19,24 @@ export const CREATION_VIDEO_URL =
 export const HERO_MODEL_URL =
   'https://res.cloudinary.com/dvtv7bku4/raw/upload/v1/seedarrt/site/dlnhrejvf63ihlfnkhek.glb'
 
-// Ces trois visuels réutilisent des œuvres déjà publiées dans le Portfolio
-// (mêmes fichiers Cloudinary) plutôt que de dupliquer des exports séparés.
 export const ABOUT_IMAGE_URL =
-  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/hsnlvdk4odjtat1p8iig'
+  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/c0agkmsgtywkd1eufuig'
 
+// Fallback mobile de l'étape "Objet 3D" (le canvas 3D n'est pas tenté sur
+// mobile, voir Creation.jsx).
 export const CREATION_STEP_3D_IMAGE_URL =
-  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/m0hrokyibsi6s52mnfpd'
+  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/io8utlbuv8qytux81ssp'
 
+// ~6% d'espace ajouté en haut à la source, comme CREATION_STEP_GRAPHISME_IMAGE_URL
+// ci-dessous (voir NOTES-perf-grain-overlay.md pour l'historique) : à 100% de
+// hauteur l'image touchait la navbar (fixe, superposée). Même traitement que
+// Graphisme pour que les deux gardent une taille cohérente entre elles — ne
+// réutilise donc plus directement l'œuvre du Portfolio, copie dédiée.
 export const CREATION_STEP_PEINTURE_IMAGE_URL =
-  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/kkr921ndjvbmyllysy45'
+  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/fnv6tuqzcfyoqsmlktl4'
 
 export const CREATION_STEP_GRAPHISME_IMAGE_URL =
-  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/rkpu2lt5ood30raqmb5x'
+  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/ihy1yw2gipazrciridb2'
 
 // Modèle compressé (gltfpack -cc -vtf, meshopt). Le fichier source (exporté
 // depuis Nomad Sculpt) contenait des morph targets résiduels (poids à 0,

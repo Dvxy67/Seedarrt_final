@@ -29,6 +29,7 @@ const steps = [
     modelRotationY: Math.PI - 0.22,
     modelPositionY: -1,
     src: CREATION_STEP_3D_IMAGE_URL,
+    imagePosition: 'top',
   },
   {
     index: '02',
@@ -36,6 +37,7 @@ const steps = [
     description: "Exploration de la matière et de la couleur à travers l'huile sur toile. Des œuvres organiques inspirées par la nature et ses cycles.",
     type: 'image',
     src: CREATION_STEP_PEINTURE_IMAGE_URL,
+    imagePosition: 'center 35%',
   },
   {
     index: '03',
@@ -259,7 +261,20 @@ export default function Creation() {
                 {s.type === 'video' ? (
                   <VideoStep src={s.src} />
                 ) : s.type === 'image' || (isMobile && s.src) ? (
-                  <img src={s.src} alt={s.name} className={styles.image} loading="eager" />
+                  <img
+                    src={s.src}
+                    alt={s.name}
+                    className={styles.image}
+                    style={{
+                      ...(s.imagePosition && { objectPosition: s.imagePosition }),
+                      ...(!isMobile && s.imageAlign && { alignSelf: s.imageAlign }),
+                      ...(!isMobile && s.imageMarginTop && {
+                        marginTop: s.imageMarginTop,
+                        height: `calc(100% - ${s.imageMarginTop})`,
+                      }),
+                    }}
+                    loading="eager"
+                  />
                 ) : isMobile ? (
                   <div className={styles.scenePlaceholder}>
                     <span>Aperçu 3D — bientôt disponible</span>

@@ -347,7 +347,16 @@ export default function Portfolio() {
       Flip.from(flipStateRef.current, {
         duration: reduceMotion ? 0 : 0.8,
         ease: 'expo.inOut',
-        onComplete: () => setIsAnimating(false),
+        onComplete: () => {
+          setIsAnimating(false)
+          // Le recalcul des --row-span ci-dessus ne passe pas par updateSpan()
+          // (pas de resize-observer ici), donc il ne programme jamais lui-même
+          // de rafraîchissement ScrollTrigger. Sans cet appel explicite, les
+          // sections suivantes (ex. le déclenchement du fond clair d'À propos)
+          // gardent des positions de trigger calculées sur l'ancienne hauteur
+          // de grille après un changement de densité/filtre.
+          scheduleScrollTriggerRefresh()
+        },
       })
       flipStateRef.current = null
     }
