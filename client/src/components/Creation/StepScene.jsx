@@ -4,10 +4,9 @@ import { useGLTF, Environment, Preload } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { SkeletonUtils } from 'three-stdlib'
 import * as THREE from 'three'
-import { HERO_MODEL_URL } from '../../lib/siteAssets'
 
-function StepModel() {
-  const { scene: source } = useGLTF(HERO_MODEL_URL)
+function StepModel({ modelUrl, scale = 0.42, rotationY = 0, positionY = 0 }) {
+  const { scene: source } = useGLTF(modelUrl)
   const scene = useMemo(() => SkeletonUtils.clone(source), [source])
   const groupRef = useRef()
   const mouse = useRef({ x: 0, y: 0 })
@@ -34,18 +33,19 @@ function StepModel() {
     rot.current.x += vel.current.x
     rot.current.y += vel.current.y
     groupRef.current.rotation.x = rot.current.x
-    groupRef.current.rotation.y = rot.current.y
-    groupRef.current.position.y = Math.sin(clock.elapsedTime * 0.8) * 0.1
+    groupRef.current.rotation.y = rotationY + rot.current.y
+    groupRef.current.position.y = positionY + Math.sin(clock.elapsedTime * 0.8) * 0.1
   })
 
   return (
-    <primitive ref={groupRef} object={scene} scale={0.42} position={[0, 0, 0]} />
+    <primitive ref={groupRef} object={scene} scale={scale} position={[0, 0, 0]} />
   )
 }
 
-export default function StepScene() {
+export default function StepScene({ modelUrl, scale, rotationY, positionY, active = true }) {
   return (
     <Canvas
+      frameloop={active ? 'always' : 'never'}
       camera={{ position: [0, 0, 8], fov: 45 }}
       gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
       dpr={[1, 2]}
@@ -55,7 +55,7 @@ export default function StepScene() {
       <directionalLight position={[6, 6, 4]} intensity={1.2} color="#f5f0ea" />
       <pointLight position={[-6, -4, -4]} intensity={0.8} color="#00674f" />
       <Environment preset="night" />
-      <StepModel />
+      <StepModel modelUrl={modelUrl} scale={scale} rotationY={rotationY} positionY={positionY} />
       <EffectComposer>
         <Bloom luminanceThreshold={0.55} luminanceSmoothing={0.9} intensity={0.35} mipmapBlur />
       </EffectComposer>

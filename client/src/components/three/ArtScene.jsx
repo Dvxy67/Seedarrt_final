@@ -52,9 +52,10 @@ function Sculpture() {
 
 useGLTF.preload(HERO_MODEL_URL)
 
-export default function ArtScene() {
+export default function ArtScene({ active = true }) {
   return (
     <Canvas
+      frameloop={active ? 'always' : 'never'}
       camera={{ position: [0, 0, 8], fov: 42 }}
       gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
       dpr={[1, 2]}

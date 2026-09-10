@@ -5,11 +5,13 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { motion, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion'
 import styles from './Creation.module.css'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { useInView } from '../../hooks/useInView'
 import {
   CREATION_VIDEO_URL,
   CREATION_STEP_3D_IMAGE_URL,
   CREATION_STEP_PEINTURE_IMAGE_URL,
-  INTRO_IMAGE_URL,
+  CREATION_STEP_GRAPHISME_IMAGE_URL,
+  CREATION_STEP_3D_MODEL_URL,
 } from '../../lib/siteAssets'
 
 const StepScene = lazy(() => import('./StepScene'))
@@ -22,6 +24,10 @@ const steps = [
     name: 'Objet 3D',
     description: 'Sculpture numérique et modélisation. Des formes entre réel et imaginaire, à la frontière du vivant et du minéral.',
     type: 'scene',
+    modelUrl: CREATION_STEP_3D_MODEL_URL,
+    modelScale: 0.75,
+    modelRotationY: Math.PI - 0.22,
+    modelPositionY: -1,
     src: CREATION_STEP_3D_IMAGE_URL,
   },
   {
@@ -36,7 +42,7 @@ const steps = [
     name: 'Graphisme',
     description: 'Direction artistique et identité visuelle. Un regard singulier mis au service de projets visuels et de communication.',
     type: 'image',
-    src: INTRO_IMAGE_URL,
+    src: CREATION_STEP_GRAPHISME_IMAGE_URL,
   },
   {
     index: '04',
@@ -81,6 +87,7 @@ export default function Creation() {
   const [activeStep, setActiveStep] = useState(0)
   const isMobile = useIsMobile()
   const wrapperRef = useRef(null)
+  const inView = useInView(wrapperRef)
   const progressTrackRef = useRef(null)
   const progressFillRef = useRef(null)
 
@@ -259,7 +266,7 @@ export default function Creation() {
                   </div>
                 ) : (
                   <Suspense fallback={null}>
-                    <StepScene />
+                    <StepScene modelUrl={s.modelUrl} scale={s.modelScale} rotationY={s.modelRotationY} positionY={s.modelPositionY} active={inView} />
                   </Suspense>
                 )}
               </div>

@@ -12,7 +12,12 @@ export default function GrainOverlay() {
     canvas.width = 512
     canvas.height = 512
 
-    const draw = () => {
+    // Générer du bruit aléatoire à chaque frame (262 144 pixels × 15/s) tournait
+    // en continu sur tout le site et pesait ~1s de CPU sur un scroll de 7s. On
+    // précalcule quelques frames une seule fois puis on boucle dessus — l'œil
+    // ne distingue pas un vrai bruit d'un cycle de 8 frames à 15 fps.
+    const FRAME_COUNT = 8
+    const frames = Array.from({ length: FRAME_COUNT }, () => {
       const imageData = ctx.createImageData(512, 512)
       const d = imageData.data
       for (let i = 0; i < d.length; i += 4) {
@@ -22,7 +27,13 @@ export default function GrainOverlay() {
         d[i + 2] = v
         d[i + 3] = 15
       }
-      ctx.putImageData(imageData, 0, 0)
+      return imageData
+    })
+
+    let frameIndex = 0
+    const draw = () => {
+      ctx.putImageData(frames[frameIndex], 0, 0)
+      frameIndex = (frameIndex + 1) % FRAME_COUNT
       timer = setTimeout(draw, 1000 / 15)
     }
 

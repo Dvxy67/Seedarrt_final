@@ -2,6 +2,7 @@ import { useRef, lazy, Suspense } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import styles from './Hero.module.css'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { useInView } from '../../hooks/useInView'
 import { HERO_LOGO_URL } from '../../lib/siteAssets'
 
 const ArtScene = lazy(() => import('../three/ArtScene'))
@@ -9,6 +10,7 @@ const ArtScene = lazy(() => import('../three/ArtScene'))
 export default function Hero() {
   const ref = useRef(null)
   const isMobile = useIsMobile()
+  const inView = useInView(ref)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -35,7 +37,7 @@ export default function Hero() {
           style={{ y: canvasY, scale: canvasScale }}
         >
           <Suspense fallback={null}>
-            <ArtScene />
+            <ArtScene active={inView} />
           </Suspense>
         </motion.div>
       )}

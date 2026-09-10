@@ -160,20 +160,20 @@ function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
     const grid = el?.parentElement
     if (!el || !grid) return
 
-    const updateSpan = (source = 'resize-observer') => {
+    const updateSpan = () => {
       // Ne jamais toucher --row-span pendant une transition Flip en cours :
       // les deux systèmes bougeraient la carte en même temps et se marchent
       // dessus (ex. une image qui finit de charger pile pendant l'animation).
-      if (isAnimatingRef.current) {
-        window.__pfDebug?.push({ t: Date.now(), work: work.id, source, skipped: true })
-        return
-      }
+      if (isAnimatingRef.current) return
       const rowGap = parseFloat(getComputedStyle(grid).rowGap) || 0
       const rowHeight = parseFloat(getComputedStyle(grid).gridAutoRows) || 1
       const rect = el.getBoundingClientRect()
-      const span = Math.ceil((rect.height + rowGap) / (rowHeight + rowGap))
-      el.style.setProperty('--row-span', String(span))
-      window.__pfDebug?.push({ t: Date.now(), work: work.id, source, height: rect.height, span })
+      const span = String(Math.ceil((rect.height + rowGap) / (rowHeight + rowGap)))
+      // Beaucoup de resize-observer se déclenchent sans changement réel de
+      // span (micro-ajustements sub-pixel) : éviter l'écriture DOM et le
+      // refresh ScrollTrigger (global, coûteux) quand rien n'a changé.
+      if (el.style.getPropertyValue('--row-span') === span) return
+      el.style.setProperty('--row-span', span)
       scheduleScrollTriggerRefresh()
     }
     updateSpanRef.current = updateSpan
@@ -188,7 +188,7 @@ function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
   useEffect(() => {
     const wasAnimating = isAnimatingRef.current
     isAnimatingRef.current = isAnimating
-    if (wasAnimating && !isAnimating) updateSpanRef.current('catch-up')
+    if (wasAnimating && !isAnimating) updateSpanRef.current()
   }, [isAnimating])
 
   return (
@@ -223,10 +223,6 @@ function WorkCard({ work, index, onClick, eagerFirst, isAnimating }) {
     </motion.article>
   )
 }
-
-// Debug temporaire pour diagnostiquer le bug de chevauchement des cartes —
-// à retirer une fois la cause trouvée. Dans la console : window.__pfDebug
-if (typeof window !== 'undefined' && !window.__pfDebug) window.__pfDebug = []
 
 export default function Portfolio() {
   const [works, setWorks] = useState([])
@@ -344,19 +340,14 @@ export default function Portfolio() {
         const rect = card.getBoundingClientRect()
         const span = Math.ceil((rect.height + rowGap) / (rowHeight + rowGap))
         card.style.setProperty('--row-span', String(span))
-        window.__pfDebug?.push({ t: Date.now(), work: card.dataset.flipId, source: 'bulk-recalc', height: rect.height, span })
       })
 
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-      window.__pfDebug?.push({ t: Date.now(), source: 'flip-start' })
       Flip.from(flipStateRef.current, {
         duration: reduceMotion ? 0 : 0.8,
         ease: 'expo.inOut',
-        onComplete: () => {
-          window.__pfDebug?.push({ t: Date.now(), source: 'flip-complete' })
-          setIsAnimating(false)
-        },
+        onComplete: () => setIsAnimating(false),
       })
       flipStateRef.current = null
     }

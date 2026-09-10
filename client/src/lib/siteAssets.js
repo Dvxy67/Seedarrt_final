@@ -29,3 +29,18 @@ export const CREATION_STEP_3D_IMAGE_URL =
 
 export const CREATION_STEP_PEINTURE_IMAGE_URL =
   'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/kkr921ndjvbmyllysy45'
+
+export const CREATION_STEP_GRAPHISME_IMAGE_URL =
+  'https://res.cloudinary.com/dvtv7bku4/image/upload/c_limit,f_auto,q_auto,w_1600/v1/seedarrt/site/rkpu2lt5ood30raqmb5x'
+
+// Modèle compressé (gltfpack -cc -vtf, meshopt). Le fichier source (exporté
+// depuis Nomad Sculpt) contenait des morph targets résiduels (poids à 0,
+// restes de l'historique de sculpture) dont les métadonnées "targetNames"
+// cassaient à la fois gltfpack et le shader Three.js (vColor indéfini) —
+// retirés avant compression avec @gltf-transform/core. UV en flottant pour
+// éviter KHR_texture_transform (idem, casse la compilation du vertex shader).
+// 14.8 Mo → 2.8 Mo, sous la limite Cloudinary (10 Mo/fichier raw). Utilisé
+// par l'étape "Objet 3D" de Création (indépendant du modèle du Hero,
+// HERO_MODEL_URL).
+export const CREATION_STEP_3D_MODEL_URL =
+  'https://res.cloudinary.com/dvtv7bku4/raw/upload/v1/seedarrt/site/ydpz2zdjnot6dbvvwqq0'
