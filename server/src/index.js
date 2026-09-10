@@ -21,16 +21,22 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
+      imgSrc: ["'self'", 'data:', 'blob:', 'https://res.cloudinary.com'],
       mediaSrc: ["'self'", 'https://res.cloudinary.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
       styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      // 'self' seul bloquait les fetch() JS de Three.js vers les modèles
-      // .glb Cloudinary (img-src/media-src ne couvrent que <img>/<video>,
-      // pas les requêtes faites en JS) — l'erreur non rattrapée faisait
-      // planter tout le rendu React (page entièrement noire).
-      connectSrc: ["'self'", 'https://res.cloudinary.com'],
+      // Le décodeur Draco/meshopt des modèles .glb compressés a besoin de
+      // WebAssembly ('wasm-unsafe-eval') et s'amorce via un <script> inline
+      // injecté au runtime ('unsafe-inline') — propre à ce pipeline de
+      // chargement 3D, pas une inline classique évitable.
+      scriptSrc: ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
+      workerSrc: ["'self'", 'blob:'],
+      // 'self' seul bloquait les fetch() JS de Three.js : vers les modèles
+      // .glb Cloudinary, vers les blob: internes générés pendant le décodage
+      // des textures, et vers la texture d'environnement HDRI par défaut de
+      // Drei (hébergée sur raw.githack.com). Ces erreurs non rattrapées
+      // faisaient planter tout le rendu React (page entièrement noire).
+      connectSrc: ["'self'", 'blob:', 'https://res.cloudinary.com', 'https://raw.githack.com'],
     },
   },
 }))
