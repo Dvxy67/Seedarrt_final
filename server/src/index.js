@@ -26,7 +26,11 @@ app.use(helmet({
       fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
       styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'"],
+      // 'self' seul bloquait les fetch() JS de Three.js vers les modèles
+      // .glb Cloudinary (img-src/media-src ne couvrent que <img>/<video>,
+      // pas les requêtes faites en JS) — l'erreur non rattrapée faisait
+      // planter tout le rendu React (page entièrement noire).
+      connectSrc: ["'self'", 'https://res.cloudinary.com'],
     },
   },
 }))
