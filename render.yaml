@@ -6,13 +6,17 @@
 # Utilisation : sur Render, "New +" → "Blueprint" → sélectionner ce repo.
 # Les variables marquées `sync: false` doivent être saisies à la main dans le
 # dashboard Render après création (secrets non commités).
+#
+# CLIENT_URL : URL publique de ce même service une fois connue (ex.
+# https://seedarrt.onrender.com, ou le nom de domaine final) — sert au CORS.
+# À renseigner après le premier déploiement.
 services:
   - type: web
     name: seedarrt
     env: node
     plan: starter
-    buildCommand: npm run install:all && cd server && npx prisma generate && cd .. && npm run build
-    startCommand: cd server && npx prisma migrate deploy && cd .. && node server/src/index.js
+    buildCommand: "npm run install:all && cd server && npx prisma generate && cd .. && npm run build"
+    startCommand: "cd server && npx prisma migrate deploy && cd .. && node server/src/index.js"
     healthCheckPath: /
     disk:
       name: seedarrt-data
@@ -22,13 +26,11 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        value: file:/var/data/dev.db
+        value: "file:/var/data/dev.db"
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
-        value: 7d
-      # URL publique de ce même service une fois connue (ex. https://seedarrt.onrender.com,
-      # ou le nom de domaine final) — sert au CORS. À renseigner après le premier déploiement.
+        value: "7d"
       - key: CLIENT_URL
         sync: false
       - key: SMTP_HOST
