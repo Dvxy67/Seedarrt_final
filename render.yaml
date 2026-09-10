@@ -1,0 +1,49 @@
+# Déploiement Render — un seul service web : le serveur Express sert l'API
+# (/api/*) ET le build statique du client (voir server/src/index.js). Évite
+# d'avoir deux origines séparées (le client appelle l'API en chemin relatif,
+# ex. fetch('/api/contact')).
+#
+# Utilisation : sur Render, "New +" → "Blueprint" → sélectionner ce repo.
+# Les variables marquées `sync: false` doivent être saisies à la main dans le
+# dashboard Render après création (secrets non commités).
+services:
+  - type: web
+    name: seedarrt
+    env: node
+    plan: starter
+    buildCommand: npm run install:all && cd server && npx prisma generate && cd .. && npm run build
+    startCommand: cd server && npx prisma migrate deploy && cd .. && node server/src/index.js
+    healthCheckPath: /
+    disk:
+      name: seedarrt-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:/var/data/dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      # URL publique de ce même service une fois connue (ex. https://seedarrt.onrender.com,
+      # ou le nom de domaine final) — sert au CORS. À renseigner après le premier déploiement.
+      - key: CLIENT_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
